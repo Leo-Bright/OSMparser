@@ -11,22 +11,22 @@ class OSMCounter(object):
     def ways(self, ways):
         # callback method for ways
         for osmid, tags, refs in ways:
-            self.wayDic[osmid] = (osmid, tags, refs)
+            self.wayDic[osmid] = (tags, refs)
 
     def nodes(self, nodes):
         # callback method for nodes
         for osmid, tags, coordinary in nodes:
-            self.nodeDic[osmid] = (osmid, tags, coordinary)
+            self.nodeDic[osmid] = (tags, coordinary)
 
     def coords(self, coords):
         # callback method for coords
         for osmid, lat, lon in coords:
-            self.coordDic[osmid] = (osmid, lat, lon)
+            self.coordDic[osmid] = (lat, lon)
 
     def relations(self, relations):
         # callback method for relations
         for osmid, tags, refs in relations:
-            self.relationDic[osmid] = (osmid, tags, refs)
+            self.relationDic[osmid] = (tags, refs)
 
 
 # instantiate counter and parser and start parsing Proto ways
@@ -43,12 +43,22 @@ f_coords = open(r'coords.result', 'w+')
 f_relations = open(r'relations.result', 'w+')
 
 for item in counter.wayDic.items():
-    # start_node = counter.nodeDic.get(refs[0])
-    # end_node = counter.nodeDic.get(refs[-1])
+    refs = item[-1][-1]
+    start_node = refs[0]
+    end_node = refs[-1]
     # nodes = str(refs[0]) + " " + str(refs[-1])
     # nodes = str(osmid) + " " + str(tags) + " " + str(refs)
-    # nodes_coord = str(start_node[-1]) + ' ' +  str(end_node[-1])
-    f_ways.write(item.__str__() + '\n')
+    start_node_coord = counter.nodeDic.get(start_node)
+    end_node_coord = counter.nodeDic.get(end_node)
+    if not start_node_coord:
+        start_node_coord = counter.coordDic.get(start_node)
+    else:
+        start_node_coord = start_node_coord[-1]
+    if not end_node_coord:
+        end_node_coord = counter.coordDic.get(start_node)
+    else:
+        end_node_coord = end_node_coord[-1]
+    f_ways.write(str(start_node_coord) + ' ' + str(end_node_coord) + '\n')
 
 for item in counter.nodeDic.items():
     # print(item)
