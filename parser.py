@@ -42,6 +42,8 @@ f_nodes = open(r'nodes.result', 'w+')
 f_coords = open(r'coords.result', 'w+')
 f_relations = open(r'relations.result', 'w+')
 
+
+# output node_coordinate
 # for item in counter.wayDic.items():
 #     refs = item[-1][-1]
 #     start_node = refs[0]
@@ -60,11 +62,19 @@ f_relations = open(r'relations.result', 'w+')
 #         end_node_coord = end_node_coord[-1]
 #     f_ways.write(str(start_node_coord) + ' ' + str(end_node_coord) + '\n')
 
+
+# output start and end node in a way
+# for item in counter.wayDic.items():
+#     refs = item[-1][-1]
+#     start_node = refs[0]
+#     end_node = refs[-1]
+#     f_ways.write(str(start_node) + ' ' + str(end_node) + '\n')
+
+
+# output all info of ways
 for item in counter.wayDic.items():
-    refs = item[-1][-1]
-    start_node = refs[0]
-    end_node = refs[-1]
-    f_ways.write(str(start_node) + ' ' + str(end_node) + '\n')
+    # print(item)
+    f_ways.write(str(item[1][0]) + '\n')
 
 for item in counter.nodeDic.items():
     # print(item)
