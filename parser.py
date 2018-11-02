@@ -1,30 +1,71 @@
 from imposm.parser import OSMParser
 
 # simple class that handles the parsed OSM data.
-class HighwayCounter(object):
-    wayList = []
+class OSMCounter(object):
+    relationDic = {}
+    coordDic = {}
+    nodeDic = {}
+    wayDic = {}
     wayCount = 0
 
     def ways(self, ways):
         # callback method for ways
         for osmid, tags, refs in ways:
-          # self.highways += 1
-          #   self.wayCount += 1
-          #   self.wayList.append(refs)
-            self.wayList.append((osmid, tags, refs))
+            self.wayDic[osmid] = (osmid, tags, refs)
 
-# instantiate counter and parser and start parsing
-counter = HighwayCounter()
-p = OSMParser(concurrency=4, ways_callback=counter.ways)
+    def nodes(self, nodes):
+        # callback method for nodes
+        for osmid, tags, coordinary in nodes:
+            self.nodeDic[osmid] = (osmid, tags, coordinary)
+
+    def coords(self, coords):
+        # callback method for coords
+        for osmid, lat, lon in coords:
+            self.coordDic[osmid] = (osmid, lat, lon)
+
+    def relations(self, relations):
+        # callback method for relations
+        for osmid, tags, refs in relations:
+            self.relationDic[osmid] = (osmid, tags, refs)
+
+
+# instantiate counter and parser and start parsing Proto ways
+
+counter = OSMCounter()
+p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
+              coords_callback=counter.coords, relations_callback=counter.relations)
 p.parse('Porto.osm.pbf')
 
-# done
-print counter.wayCount
-f = open(r'way_network.result', 'w+')
+# write the counter result to file
+f_ways = open(r'ways.result', 'w+')
+f_nodes = open(r'nodes.result', 'w+')
+f_coords = open(r'coords.result', 'w+')
+f_relations = open(r'relations.result', 'w+')
 
-for osmid, tags, refs  in counter.wayList:
+for item in counter.wayDic.items():
+    # start_node = counter.nodeDic.get(refs[0])
+    # end_node = counter.nodeDic.get(refs[-1])
     # nodes = str(refs[0]) + " " + str(refs[-1])
-    nodes = str(osmid) + " " + str(tags) + " " + str(refs)
-    print(nodes)
-    f.write(nodes + '\n')
-f.close()
+    # nodes = str(osmid) + " " + str(tags) + " " + str(refs)
+    # nodes_coord = str(start_node[-1]) + ' ' +  str(end_node[-1])
+    f_ways.write(item.__str__() + '\n')
+
+for item in counter.nodeDic.items():
+    # print(item)
+    f_nodes.write(item.__str__() + '\n')
+
+for item in counter.coordDic.items():
+    # print(item)
+    f_coords.write(item.__str__() + '\n')
+
+for item in counter.relationDic.items():
+    # print(item)
+    f_relations.write(item.__str__() + '\n')
+
+f_ways.close()
+f_nodes.close()
+f_coords.close()
+f_relations.close()
+
+# instantiate counter and parser and start parsing Proto nodes
+
