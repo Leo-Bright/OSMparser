@@ -1,5 +1,6 @@
 from imposm.parser import OSMParser
 
+
 # simple class that handles the parsed OSM data.
 class OSMCounter(object):
     relationDic = {}
@@ -56,7 +57,8 @@ class OSMCounter(object):
     def ways(self, ways):
         # callback method for ways
         for osmid, tags, refs in ways:
-            self.wayDic[osmid] = (tags, refs)
+            if 'highway' in tags:
+                self.wayDic[osmid] = (tags, refs)
 
     def nodes(self, nodes):
         # callback method for nodes
@@ -87,7 +89,7 @@ f_coords = open(r'coords.result', 'w+')
 f_relations = open(r'relations.result', 'w+')
 
 # whats data you want to write.
-counter.print_ways_result(f_ways, osmid=True, tag=True, coordinate=True)
+counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False)
 
 for item in counter.nodeDic.items():
     # print(item)
