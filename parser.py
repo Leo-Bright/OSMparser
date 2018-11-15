@@ -53,7 +53,10 @@ class OSMCounter(object):
             else:
                 for node in nodes:
                     output_file.write(str(node) + ' ')
-                output_file.write('\n')
+                output_file.write('1' + '\n')
+                for node in reversed(nodes):
+                    output_file.write(str(node) + ' ')
+                output_file.write('1' + '\n')
 
     def count_tags(self, output_file, type='way', output='formal', order=True):
         tagsDict = {} #{key:{value:count}}
@@ -92,9 +95,9 @@ class OSMCounter(object):
     def ways(self, ways):
         # callback method for ways
         for osmid, tags, refs in ways:
-            # if 'highway' in tags:
-                # self.wayDic[osmid] = (tags, refs)
-            self.wayDic[osmid] = (tags, refs)
+            if 'highway' in tags:
+                self.wayDic[osmid] = (tags, refs)
+            # self.wayDic[osmid] = (tags, refs)
 
     def nodes(self, nodes):
         # callback method for nodes
@@ -119,34 +122,34 @@ p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.
 p.parse('Porto.osm.pbf')
 
 # write the counter result to file
-# f_ways = open(r'ways.result', 'w+')
-f_ways_tags = open(r'ways_tags.result', 'w+')
+f_ways = open(r'ways.result', 'w+')
+# f_ways_tags = open(r'ways_tags.result', 'w+')
 # f_nodes = open(r'nodes.result', 'w+')
-f_nodes_tags = open(r'nodes_tags.result', 'w+')
-f_coords = open(r'coords.result', 'w+')
-f_relations = open(r'relations.result', 'w+')
+# f_nodes_tags = open(r'nodes_tags.result', 'w+')
+# f_coords = open(r'coords.result', 'w+')
+# f_relations = open(r'relations.result', 'w+')
 
 # whats data you want to write.
-# counter.print_ways_result(f_ways, osmid=False, tag=True, coordinate=False)
-counter.count_tags(f_ways_tags, type='way', output='formal', order=False)
-counter.count_tags(f_nodes_tags, type='node', output='json', order=True)
+counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False)
+# counter.count_tags(f_ways_tags, type='way', output='formal', order=False)
+# counter.count_tags(f_nodes_tags, type='node', output='json', order=True)
 
 # for item in counter.nodeDic.items():
-    # print(item)
-    # f_nodes.write(item.__str__() + '\n')
+#     print(item)
+#     f_nodes.write(item.__str__() + '\n')
 
-for item in counter.coordDic.items():
+# for item in counter.coordDic.items():
     # print(item)
-    f_coords.write(item.__str__() + '\n')
+    # f_coords.write(item.__str__() + '\n')
 
-for item in counter.relationDic.items():
+# for item in counter.relationDic.items():
     # print(item)
-    f_relations.write(item.__str__() + '\n')
+    # f_relations.write(item.__str__() + '\n')
 
 # close the file resource.
-# f_ways.close()
-f_ways_tags.close()
+f_ways.close()
+# f_ways_tags.close()
 # f_nodes.close()
-f_nodes_tags.close()
-f_coords.close()
-f_relations.close()
+# f_nodes_tags.close()
+# f_coords.close()
+# f_relations.close()
