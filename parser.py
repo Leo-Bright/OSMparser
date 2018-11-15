@@ -55,7 +55,7 @@ class OSMCounter(object):
                     output_file.write(str(node) + ' ')
                 output_file.write('\n')
 
-    def count_tags(self, output_file, type='way'):
+    def count_tags(self, output_file, type='way', output='formal', order=True):
         tagsDict = {} #{key:{value:count}}
         tagsCountList = [] #[(key,value,count)]
         if type=='way':
@@ -71,19 +71,23 @@ class OSMCounter(object):
                     tagsDict[k][v] = 1
                 else:
                     tagsDict[k][v] += 1
-        for key, value_count in tagsDict.items():
-            for value, count in value_count.items():
-                tagsCountList.append((key, value, count))
-        tagsCountList.sort(key=lambda x: x[-1], reverse=True)
-        for key, value, count in tagsCountList:
-            try:
-                output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
-            except:
-                if not isinstance(key, int):
-                    key = key.encode('utf8')
-                if not isinstance(value, int):
-                    value = value.encode('utf8')
-                output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
+        if output=='json':
+            output_file.write(json.dumps(tagsDict))
+        else:
+            for key, value_count in tagsDict.items():
+                for value, count in value_count.items():
+                    tagsCountList.append((key, value, count))
+            if order:
+                tagsCountList.sort(key=lambda x: x[-1], reverse=True)
+            for key, value, count in tagsCountList:
+                try:
+                    output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
+                except:
+                    if not isinstance(key, int):
+                        key = key.encode('utf8')
+                    if not isinstance(value, int):
+                        value = value.encode('utf8')
+                    output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
 
     def ways(self, ways):
         # callback method for ways
@@ -124,8 +128,8 @@ f_relations = open(r'relations.result', 'w+')
 
 # whats data you want to write.
 # counter.print_ways_result(f_ways, osmid=False, tag=True, coordinate=False)
-counter.count_tags(f_ways_tags, type='way')
-counter.count_tags(f_nodes_tags, type='node')
+counter.count_tags(f_ways_tags, type='way', output='formal', order=False)
+counter.count_tags(f_nodes_tags, type='node', output='json', order=True)
 
 # for item in counter.nodeDic.items():
     # print(item)
