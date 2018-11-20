@@ -17,21 +17,22 @@ class OSMCounter(object):
     def prepare_classify_data(self, input, output):
 
         for line in input.readlines():
-            osmid_vector = line.strip().split(' ')
+            line = line.strip()
+            osmid_vector = line.split(' ')
             osmid, node_vec = osmid_vector[0], osmid_vector[1:]
             if len(node_vec) < 10:
-                output.write(line + '\n')
+                output.write(line.strip() + '\n')
                 continue
-            if osmid not in self.nodeDic:
+            if osmid not in self.nodeDic.keys():
                 output.write(line + ' ' + '-1' + '\n')
                 continue
             node_tags = self.nodeDic[osmid][0]
-            if 'crossing' in node_tags:
+            if 'crossing' in node_tags.keys():
                 print('crossing key in the tags')
                 output.write(line + ' ' + '1' + '\n')
                 self.crossing_count += 1
-            elif 'highway' in node_tags:
-                if 'crossing' in node_tags['highway']:
+            elif 'highway' in node_tags.keys():
+                if 'crossing' == node_tags['highway']:
                     print('highway key and crossing value in the tags')
                     output.write(line + ' ' + '1' + '\n')
                     self.crossing_count += 1
@@ -89,8 +90,8 @@ p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.
               coords_callback=counter.coords, relations_callback=counter.relations)
 p.parse('Porto.osm.pbf')
 
-f_input = open(r'dataset/deepwalk_node2vec_highway_64d.txt', 'r')
-f_output = open(r'dataset/deepwalk_highway_64d_labeled.txt', 'w+')
+f_input = open(r'dataset/deepwalk_highway_64d.embeddings', 'r')
+f_output = open(r'dataset/deepwalk_highway_64d_labeled.embeddings', 'w+')
 
 counter.prepare_classify_data(f_input, f_output)
 counter.count_node_in_way()
