@@ -7,6 +7,7 @@ class OSMCounter(object):
     relationDic = {} #{osmid:(tags, refs)}
     coordDic = {} #{osmid:(lat, lon)}
     nodeDic = {} #{osmid:(tags, coordinary)}
+    choice_node_dic = {} #{osmid:(tags, coordinary)}
     wayDic = {} #{osmid:(tags, refs)}
 
     def get_node_coord(self, osmid):
@@ -60,13 +61,21 @@ class OSMCounter(object):
                 #     output_file.write(str(node) + ' ')
                 # output_file.write('1' + '\n')
 
-    def count_tags(self, output_file, type='way', output='formal', order=True):
+            #add choice nodes to dic:
+            for node in nodes:
+                if node in self.nodeDic:
+                    self.choice_node_dic[node] = self.nodeDic[node]
+
+    def count_tags(self, output_file, type='way', output='formal', order=True, only_choice=False):
         tagsDict = {} #{key:{value:count}}
         tagsCountList = [] #[(key,value,count)]
         if type=='way':
             objDict = self.wayDic
         if type=='node':
-            objDict = self.nodeDic
+            if only_choice:
+                objDict = self.choice_node_dic
+            else:
+                objDict = self.nodeDic
         for osmid, tags_and_others in objDict.items():
             tags = tags_and_others[0]
             for k, v in tags.items():
@@ -124,17 +133,17 @@ p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.
 p.parse('Porto.osm.pbf')
 
 # write the counter result to file
-# f_ways = open(r'dataset/ways_allNodes.result', 'w+')
+f_ways = open(r'dataset/ways_highway.result', 'w+')
 # f_ways_tags = open(r'ways_tags.result', 'w+')
 # f_nodes = open(r'nodes.result', 'w+')
-# f_nodes_tags = open(r'nodes_tags.result', 'w+')
+f_nodes_tags = open(r'dataset/start_end_nodes_tags_json.txt', 'w+')
 # f_coords = open(r'coords.result', 'w+')
 # f_relations = open(r'relations.result', 'w+')
 
 # whats data you want to write.
-# counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False, allNodes=True)
+counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False, allNodes=False)
 # counter.count_tags(f_ways_tags, type='way', output='formal', order=False)
-# counter.count_tags(f_nodes_tags, type='node', output='json', order=True)
+counter.count_tags(f_nodes_tags, type='node', output='json', only_choice=True)
 
 # for item in counter.nodeDic.items():
 #     print(item)
@@ -149,9 +158,9 @@ p.parse('Porto.osm.pbf')
     # f_relations.write(item.__str__() + '\n')
 
 # close the file resource.
-# f_ways.close()
+f_ways.close()
 # f_ways_tags.close()
 # f_nodes.close()
-# f_nodes_tags.close()
+f_nodes_tags.close()
 # f_coords.close()
 # f_relations.close()
