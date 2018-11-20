@@ -1,0 +1,601 @@
+noexit		yes		1102
+highway		crossing		978
+highway		turning_circle		438
+crossing		zebra		405
+highway		motorway_junction		344
+barrier		gate		343
+access		private		312
+amenity		parking_entrance		311
+highway		traffic_signals		232
+source		bing		152
+crossing_ref		zebra		139
+parking		underground		137
+crossing		uncontrolled		134
+entrance		yes		125
+source		Bing		96
+entrance		home		78
+entrance		main		73
+crossing		unmarked		70
+addr:city		Calendário		62
+addr:street		Rua Machado dos Santos		48
+crossing		traffic_signals		41
+access		permissive		40
+traffic_sign		maxspeed		37
+wheelchair		yes		34
+foot		yes		29
+barrier		lift_gate		29
+ref		3		27
+addr:postcode		4760-585		24
+addr:postcode		4760-505		24
+highway		mini_roundabout		24
+railway		subway_entrance		24
+traffic_signals		signal		23
+barrier		toll_booth		22
+ref		1		22
+ref		2		18
+amenity		parking		17
+railway		level_crossing		17
+ref		6		16
+ref		4		15
+leisure		slipway		14
+access		customers		14
+barrier		bollard		13
+ref		5		13
+fee		yes		13
+entrance		service		13
+wheelchair		no		13
+tactile_paving		no		13
+bicycle		no		12
+barrier		block		12
+ref		13		12
+surface		asphalt		12
+sloped_curb		both		12
+bicycle		yes		11
+ref		7		11
+ref		14		11
+traffic_calming		bump		11
+maxspeed		100		10
+created_by		JOSM		10
+barrier		yes		10
+ref		12		10
+highway		elevator		10
+direction		forward		10
+maxspeed		60		9
+access		public		9
+maxspeed		40		8
+motorcycle		no		8
+source		bing; survey		8
+fixme		check connection		8
+barrier		entrance		8
+ref		9		8
+ref		10		8
+ref		16		8
+horse		no		8
+motorcar		no		8
+supervised		yes		8
+addr:street		Rua Brito Camacho		7
+addr:postcode		4760-277		7
+exit_to		A29		7
+ref		8		7
+ref		11		7
+ref		17		7
+lit		yes		7
+maxspeed		80		6
+addr:street		Rua António José Almeida		6
+addr:postcode		4760-176		6
+public_transport		stop_position		6
+exit_to		A1		6
+access		yes		6
+ref		21		6
+ref		15		6
+highway		give_way		6
+highway		stop		6
+power		generator		6
+generator:source		wind		6
+traffic_calming		table		6
+traffic_calming		hump		6
+noref		yes		6
+tourism		viewpoint		5
+name		Porto / Gaia		5
+crossing		island		5
+exit_to		N222		5
+exit_to		A32		5
+exit_to		A41		5
+exit_to		N1		5
+access		no		5
+highway		bus_stop		5
+addr:city		Vila Nova de Famalicão		5
+amenity		fuel		5
+layer		0		5
+bus		yes		5
+supervised		no		5
+railway		crossing		5
+traffic_signals:direction		forward		5
+addr:street		Rua Ana Plácido		4
+fixme		check		4
+addr:postcode		4760-120		4
+destination:ref		N 233		4
+destination:ref		A 4		4
+exit_to		A43		4
+exit_to		A20		4
+barrier		chain		4
+ref		22		4
+ref		18		4
+highway		speed_camera		4
+highway		turning_loop		4
+noexit		motor_vehicle		4
+addr:city		Porto		4
+direction		anticlockwise		4
+maxspeed		50		3
+covered		yes		3
+junction		yes		3
+smoothness		good		3
+fixme		house number		3
+fixme		continue		3
+name		BP		3
+name		Espinho / Canelas		3
+name		CREP		3
+name		Casa da Música		3
+name		Afurada		3
+name		Avintes / C. Paiva		3
+level		0		3
+parking		surface		3
+ref		23		3
+ref		19		3
+highway		street_lamp		3
+destination		Aeroporto		3
+sloped_curb		yes		3
+natural		spring		3
+traffic_signals:direction		backward		3
+maxspeed		90		2
+payment:cash		yes		2
+motorcycle		yes		2
+addr:housenumber		171		2
+note		Ambas as saídas para Madalena e Vilar Paraíso têm a mesma referência (4)		2
+note		localização do sinal de velocidade recomendada=100		2
+source		survey		2
+material		concrete		2
+smoothness		excellent		2
+addr:street		Largo de São Bento		2
+addr:street		Praça Dom João I		2
+name		Medas / Foz de Sousa		2
+name		Grijó / Guetim		2
+name		A41 CREP		2
+name		Área Serviço de Moreira - Maia		2
+name		Antas		2
+name		Famalicão		2
+name		N206 Vila do Conde		2
+name		Galerias Invictos		2
+name		Parque de Estacionamento Dom João I		2
+name		Parque de Estacionamento Centro Cívico		2
+name		Área de Serviço de Seide		2
+name		São João da Madeira		2
+name		A42 Paços Ferreira, Lousada, A41 Porto		2
+name		N107 Maia Este, Vermoim		2
+name		Ol. Azeméis		2
+name		Gaia / Lisboa		2
+name		EN14, Trofa, Castelo da Maia		2
+name		Gondomar / Hospital		2
+name		Vila do Conde, Santo Tirso, Trofa		2
+name		Areias / N12 Circunvalação		2
+name		Área de Serviço de Vila do Conde		2
+name		Sandim		2
+name		Viana do Castelo		2
+name		Arcozelo / Miramar		2
+name		Picoto / Argoncilhe		2
+name		Sobrado		2
+name		Lisboa / Feira		2
+name		N205 - Póvoa de Varzim, Amorim		2
+name		Marquês		2
+name		Campo / Recarei / Gandra		2
+name		Valbom / Zona Industrial		2
+name		Gaia / Oliveira do Douro		2
+name		Area de Serviço de Lousada		2
+name		Perafita		2
+name		Porto, Braga		2
+name		Senhora da Hora		2
+name		N206 Vermoim, Seide		2
+name		Matosinhos		2
+name		A42		2
+name		Nogueira da Regedoura		2
+name		Areosa		2
+name		Campanhã / São Roque		2
+name		EN 105 Guimarães Sul, EN 106 Vizela		2
+name		Felgueiras, Lousada, Porto		2
+name		Canedo / Vila Maior		2
+name		Fânzeres / São Pedro Cova		2
+name		Gondomar / Porto / S.P. Cova		2
+name		Aguiar de Sousa		2
+name		N106 Penafiel, Lousada Oeste		2
+name		A11 Felgueiras, Vizela, A42 Lousada		2
+name		Seroa / Lordelo Oeste		2
+name		Gens		2
+name		Vilar de Andorinho		2
+name		A43 Gondomar / Porto (Freixo)		2
+name		A42 Felgueiras		2
+name		Nó de acesso Parada/Baltar		2
+name		Gondomar Este		2
+name		Gaia / Porto (Arrábida)		2
+name		M 573, Famalicão, Seide		2
+name		Freixieiro / Perafita		2
+name		Felgueiras Oeste, M562 Barrosas, Vizela		2
+name		Acesso LIPOR II		2
+name		Olival / Pedroso		2
+name		Sta. Cruz do Bispo		2
+name		A7 Guimaraes, Famalicao		2
+name		Portagem do Nó de Campo		2
+name		Terminal		2
+name		Campo Alegre		2
+name		Valença		2
+name		Paços Ferreira Este, Freamunde, Ferreira, Nevogilde		2
+name		EN14, Maia, Zona Industrial		2
+name		Lavra / Aveleda		2
+name		N13 Mindelo		2
+name		Portagem de Aguiar de Sousa		2
+name		Gião / Louredo		2
+name		Gaia / Santo Ovídio		2
+level		1		2
+addr:postcode		4000-295		2
+crossing		toucan		2
+payment:mastercard		yes		2
+operator		ParqueGil		2
+operator		STCP		2
+operator		Empark		2
+destination:ref		A 41		2
+destination:ref		EN 12		2
+exit_to		São Félix da Marinha (sul) / Espinho (praias)		2
+exit_to		N205 Póvoa de Varzim; N205 Amorim		2
+exit_to		Paços de Brandão;Esmoriz		2
+exit_to		N326		2
+exit_to		Gulpilhares / Moutadas		2
+exit_to		N12		2
+exit_to		Vilar do Paraíso / Canelas		2
+exit_to		Lavra;Aveleda		2
+exit_to		N206 Vila do Conde		2
+exit_to		Maceda		2
+exit_to		A7 Guimarães; A7 Famalicão		2
+exit_to		N319-2		2
+exit_to		São Félix da Marinha (norte) / Granja		2
+exit_to		N108		2
+exit_to		VILPL - Via Interna de Ligação ao Porto de Leixões (carga)		2
+exit_to		Feira;São João da Madeira		2
+exit_to		EN 15-3		2
+exit_to		N13 Mindelo		2
+capacity		380		2
+capacity		260		2
+barrier		sally_port		2
+barrier		rope		2
+ref		20		2
+ref		9A		2
+ref		-1		2
+ref		-2		2
+highway		services		2
+addr:unit		2		2
+noexit		vehicle		2
+destination		Vila Real;Valongo;Ermesinde		2
+destination		N206; Vermoim; Seide		2
+contact:website		www.empark.com/pt/pt/aparcamento/d-joao-i-1		2
+amenity		parking_exit		2
+opening_hours		24/7		2
+contact:phone		+351 222 083 250		2
+layer		2		2
+layer		-1		2
+direction		backward		2
+brand		Galp		2
+motorcar		yes		2
+surface		unpaved		2
+traffic_calming		choker		2
+maxheight		1.90		2
+traffic_sign		city_limit		2
+lit		no		2
+payment:visa		yes		2
+maxstay		no limit		2
+railway		train_station_entrance		2
+wheelchair		limited		2
+shop		car_repair		1
+maxspeed		120		1
+automatic_door		infrared		1
+addr:housenumber		214		1
+addr:housenumber		155		1
+addr:housenumber		265		1
+addr:housenumber		746		1
+addr:housenumber		147		1
+addr:housenumber		666		1
+addr:housenumber		127		1
+addr:housenumber		455		1
+addr:housenumber		553		1
+addr:housenumber		88		1
+addr:housenumber		397		1
+addr:housenumber		112		1
+addr:housenumber		278		1
+addr:housenumber		199		1
+addr:housenumber		617		1
+addr:housenumber		87		1
+addr:housenumber		175		1
+addr:housenumber		210		1
+addr:housenumber		169		1
+addr:housenumber		46		1
+addr:housenumber		698		1
+addr:housenumber		42		1
+addr:housenumber		222		1
+addr:housenumber		730		1
+addr:housenumber		254		1
+addr:housenumber		181		1
+addr:housenumber		521		1
+addr:housenumber		650		1
+addr:housenumber		185		1
+addr:housenumber		283		1
+addr:housenumber		365		1
+addr:housenumber		235		1
+addr:housenumber		569		1
+addr:housenumber		203		1
+addr:housenumber		585		1
+addr:housenumber		142		1
+addr:housenumber		324		1
+addr:housenumber		140		1
+addr:housenumber		100		1
+addr:housenumber		301		1
+addr:housenumber		714		1
+addr:housenumber		446		1
+addr:housenumber		419		1
+addr:housenumber		505		1
+addr:housenumber		247		1
+addr:housenumber		168		1
+addr:housenumber		125		1
+addr:housenumber		489		1
+addr:housenumber		70		1
+addr:housenumber		165		1
+addr:housenumber		764		1
+addr:housenumber		248		1
+addr:housenumber		78		1
+addr:housenumber		120		1
+addr:housenumber		139		1
+addr:housenumber		901		1
+addr:housenumber		780		1
+addr:housenumber		17		1
+addr:housenumber		33		1
+addr:housenumber		51		1
+addr:housenumber		258		1
+addr:housenumber		52		1
+addr:housenumber		535		1
+addr:housenumber		471		1
+addr:housenumber		370		1
+addr:housenumber		601		1
+addr:housenumber		631		1
+addr:housenumber		293		1
+addr:housenumber		682		1
+note		Entrada vedada para o antigo túnel pedestre com 2 saídas em T		1
+note		estranhamente este radar deve ser provavelmente apenas para detetar o limite 80 na primeira faixa da direita pois nas outras 3 faixas da esquerda o limite é 100		1
+note		fim de velocidade recomendada 80		1
+note		Foi feita uma vistoria mas não foram encontrados números correspondentes à porta. Verificar o local mais tarde.		1
+note		coloquei access=no porque este portão não costuma estar aberto		1
+fenced		yes		1
+bench		yes		1
+source		GPS Survey		1
+source		Bing dated 2012		1
+source		PDM 2015 - Vila Nova de Famalicão		1
+crossing:barrier		yes		1
+emergency		emergency_ward_entrance		1
+leisure		marina		1
+leisure		park		1
+historic		wayside_cross		1
+map_type		scheme		1
+tourism		information		1
+tourism		picnic_site		1
+addr:street		Rua de Contumil		1
+addr:street		Rua da Cadeia		1
+addr:street		Rua da Fábrica		1
+addr:street		Avenida Carlos Bacelar		1
+addr:street		Rua Quinta dos Ingleses		1
+addr:street		Rua António Carvalho Faria		1
+addr:street		Rua Henrique Barbosa		1
+addr:street		Avenida da Boavista		1
+fixme		This is an interception. Needs to split Rua Florbela Espanca so it can be added a 1-way route at one section.		1
+fixme		c		1
+fixme		check turn restrictions		1
+fixme		housenumber		1
+name		Urgências		1
+name		Rio Ferreira and Rio Simão		1
+name		Freixo / A43 Gondomar		1
+name		Mercado Abastecedor		1
+name		Maia / Felgueiras		1
+name		Maninho		1
+name		Santiago		1
+name		N204, Santo Tirso, Famalicão Sul		1
+name		Paranhos		1
+name		Miradouro de Gramido		1
+name		Corgo		1
+name		A7 Guimarães, Vila do Conde, Famalicão		1
+name		Ecovia Litoral de Espinho		1
+name		Porto / Braga / V. Real		1
+name		A7 Fafe, A24 Vila Real, Chaves		1
+name		N310 Pevidem, Serzedelo, Riba de Ave		1
+name		Espinho / Lisboa		1
+name		Ol. Azeméis / Feira		1
+name		Braga, Famalicao		1
+name		Boavista / Bessa Leite		1
+name		Gondomar (centro)		1
+name		Parque Metro		1
+name		Avenida da Boavista		1
+name		Leça da Palmeira		1
+name		Porto/Paranhos/Hospital		1
+name		Porto (Via Norte)		1
+name		Espinho / Picoto		1
+name		Antiga Prisão Feminina de Felgueiras		1
+name		Consultas Externas (Instituto de Oncologia do Porto)		1
+name		P. Cardosas		1
+name		Boavista / V. Castelo		1
+name		Capela de Gens		1
+name		Radar Fixo		1
+name		Alvarenga, Lousada, Silvares		1
+name		Lgo. Estêvão Torres		1
+name		A20		1
+name		Auto Reparadora Semfim Das Antas Lda		1
+name		Travessa da Rua Central		1
+name		A43 Porto / Valbom		1
+name		Merc. Abastecedor		1
+name		Avenida da Boavista / Foz		1
+name		Postigo do Carvão		1
+name		Maia / Felgueiras / Braga		1
+name		A3 Valença, Braga		1
+name		Amial/Arca d'Água		1
+name		Varziela, Longra		1
+name		Gaia / Ol. Azeméis		1
+name		Freixo/ Entre-os-Rios		1
+name		Santa Cruz do Bispo / Moreira		1
+name		N3 Porto (Via Norte)		1
+name		Grijó		1
+name		A3 Porto, Braga		1
+name		Maia Norte / Moreira / Mosteiro		1
+name		Esli Empark Brasília		1
+name		BoavistaPark		1
+name		Gaia / V. Andorinho		1
+name		Largo do Cruzeiro		1
+name		Braga/Maia		1
+name		Alameda Shopping Porto		1
+name		Gomes Júnior		1
+name		Braga/Maia/Carvalhido		1
+name		Amial / Arca d'Água		1
+name		S. R. Lameira / Merc. Abastecedor		1
+name		Campanhã		1
+name		Porto / Braga / Vila Real		1
+name		Entrada Norte		1
+name		N13 / Maia Norte / Moreira		1
+name		N13 Maia / Modivas		1
+name		Aveiro / Esmoriz		1
+name		Vila Real / Matosinhos		1
+name		Vila de Nogueira da Regedoura		1
+name		Espinho		1
+name		Trofa, Famalicão		1
+name		Canidelo		1
+name		Varziela, Caide		1
+name		A41 / Maia / (A3) Braga / A42 Felgueiras		1
+name		Braga, Guimarães, Chaves		1
+name		PISTA DE  PEOES		1
+name		Covelo (Vale do Melro)		1
+name		Boavista		1
+name		Picoto / CREP		1
+name		Infante		1
+name		A43 Gens / A41 CREP		1
+name		Porto (Freixo)		1
+name		Alvarenga, Lousada		1
+name		Multiusos / Piscinas / Ermentão		1
+name		Carvalhido/Prelada		1
+name		Cruzamento do Alto da Maia		1
+name		Maia / Alfena		1
+name		Miradouro da Boa Nova		1
+name		Entrada Sul		1
+name		Radio		1
+name		Marina Lixa		1
+name		Cête		1
+name		Malaposta		1
+name		Gondomar / Circunvalação		1
+level		0, -1		1
+addr:postcode		4760-121		1
+addr:postcode		4760-103		1
+addr:postcode		4610		1
+addr:postcode		4350-161		1
+addr:postcode		4760-742		1
+crossing		island;traffic_signals		1
+crossing		pedestrian		1
+side		right		1
+map_size		region		1
+operator		Câmara Municipal de Felgueiras		1
+operator		Fundação Gramaxo		1
+operator		ParkCharge		1
+operator		Parclick, S.L.		1
+operator		Gondomarense		1
+operator		Esli Empark		1
+parking		entrance		1
+destination:ref		M 527		1
+destination:ref		VRI		1
+exit_to		Cortegaça / Rio Meão		1
+exit_to		Perafita;hospital		1
+exit_to		A41 Maia; A42 Felgueiras; Aeroporto; Leixões (carga); A1 Lisboa (Ponte do Freixo)		1
+exit_to		Santa Cruz do Bispo;Exponor;zona comercial		1
+exit_to		Cortegaça;Rio Meão		1
+exit_to		Viana do Castelo;Matosinhos;Leixões		1
+exit_to		Terminal TIR;zona comercial		1
+exit_to		A28 Viana		1
+exit_to		N107;Freixieiro;Perafita		1
+exit_to		N13 Mindelo; N104 Santo Tirso Trofa		1
+exit_to		N13 Mindelo; (N104) Santo Tirso; (N104) Trofa		1
+exit_to		N13 Maia; N13 Modivas		1
+exit_to		Boavista;Bessa		1
+exit_to		N13 Maia; N13 Modivas; Zona Comercial		1
+exit_to		M529 Fajozes; M529 Árvore		1
+exit_to		Santa Cruz do Bispo; Moreira		1
+capacity		10		1
+barrier		fence		1
+barrier		wall		1
+barrier		swing_gate		1
+maxwidth		0.3		1
+fuel:diesel		yes		1
+man_made		tower		1
+exit		no		1
+ref		18B		1
+ref		18A		1
+ref		GJ1		1
+highway		milestone		1
+recommend_speed		80		1
+power		tower		1
+addr:unit		48		1
+addr:unit		49		1
+addr:unit		45		1
+addr:unit		43		1
+addr:unit		40		1
+addr:unit		41		1
+addr:unit		3		1
+fuel:octane_98		yes		1
+traffic_sign:forward		PT:H6		1
+addr:city		Felgueiras		1
+place		neighbourhood		1
+place		hamlet		1
+toilets:wheelchair		yes		1
+destination		Rio Mau;Junqueira		1
+destination		Maia;Aeroporto;Ermesinde;Paços de Ferreira		1
+destination		Porto;Matosinhos;Leixões		1
+destination		Parafita;Viana do Castelo;Vila do Conde		1
+destination		Matosinhos;Aeroporto;Viana do Castelo		1
+destination		Matosinhos		1
+destination		Rio Mau;Junqueira;Beiriz;Touguinhó;Touguinha		1
+destination		Gondomar;Rio Tinto		1
+hiking		yes		1
+amenity		prison		1
+amenity		traffic_signals		1
+amenity		bicycle_parking		1
+tower:type		communication		1
+destination:lanes		Canelas;Porto (Freixo)|Aveiro;Espinho;Lisboa		1
+horse		yes		1
+site_type		parking		1
+aerialway		station		1
+button_operated		yes		1
+opening_hours		Mo-Fr 08:00-21:00; Sa 09:00-20:00		1
+layer		1		1
+destination:ref:lanes		A 29|A 29		1
+vehicle		no		1
+bicycle_parking		stands		1
+door		sliding		1
+brand		BP		1
+phone		22 550 7696		1
+hi		crossing		1
+surface		cobblestone		1
+line		Green		1
+crossing:bell		yes		1
+distance		278		1
+entrance		emergency		1
+entrance		gate		1
+maxheight		2		1
+sloped_curb		no		1
+payment:via_verde		yes		1
+information		map		1
+floor		3		1
+traffic_sign		ES:s7		1
+traffic_sign		ES:s8		1
+fuel:octane_95		yes		1
+description		Mapa básico com algumas informações úteis da ecovia		1
+shelter		yes		1
+network		8		1
+natural		tree		1
+key:STCP		MNH1		1
+crossing:light		yes		1
