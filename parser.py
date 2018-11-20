@@ -28,18 +28,21 @@ class OSMCounter(object):
     # tag : do write the tag to the result  ?
     # refs_index: select the index of refs you want
     # coordinate: write the coordinate of the refs to result file or only the refs ?
-    def print_ways_result(self, output_file, osmid=False, tag=False, refs_index=[0, -1], coordinate=False):
+    def print_ways_result(self, output_file, osmid=False, tag=False, allNodes=False, coordinate=False):
 
         for item in self.wayDic.items():
             refs = item[1][-1]
 
             # filter the way that don't match the condition
-            if len(refs) < len(refs_index):
+            if len(refs) < 2:
                 continue
 
             nodes = []
-            for index in refs_index:
-                nodes.append(refs[index])
+            if allNodes:
+                nodes = refs
+            else:
+                nodes.append(refs[0])
+                nodes.append(refs[-1])
             if osmid:
                 output_file.write(str(item[0]) + ' ')
             if tag:
@@ -51,12 +54,11 @@ class OSMCounter(object):
                 output_file.write('\n')
 
             else:
-                for node in nodes:
-                    output_file.write(str(node) + ' ')
-                output_file.write('1' + '\n')
-                for node in reversed(nodes):
-                    output_file.write(str(node) + ' ')
-                output_file.write('1' + '\n')
+                for node_index in range(len(nodes)-1):
+                    output_file.write(str(nodes[node_index]) + ' ' + str(nodes[node_index+1]) + '\n')
+                # for node in reversed(nodes):
+                #     output_file.write(str(node) + ' ')
+                # output_file.write('1' + '\n')
 
     def count_tags(self, output_file, type='way', output='formal', order=True):
         tagsDict = {} #{key:{value:count}}
@@ -122,7 +124,7 @@ p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.
 p.parse('Porto.osm.pbf')
 
 # write the counter result to file
-f_ways = open(r'ways.result', 'w+')
+# f_ways = open(r'dataset/ways_allNodes.result', 'w+')
 # f_ways_tags = open(r'ways_tags.result', 'w+')
 # f_nodes = open(r'nodes.result', 'w+')
 # f_nodes_tags = open(r'nodes_tags.result', 'w+')
@@ -130,7 +132,7 @@ f_ways = open(r'ways.result', 'w+')
 # f_relations = open(r'relations.result', 'w+')
 
 # whats data you want to write.
-counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False)
+# counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False, allNodes=True)
 # counter.count_tags(f_ways_tags, type='way', output='formal', order=False)
 # counter.count_tags(f_nodes_tags, type='node', output='json', order=True)
 
@@ -147,7 +149,7 @@ counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False)
     # f_relations.write(item.__str__() + '\n')
 
 # close the file resource.
-f_ways.close()
+# f_ways.close()
 # f_ways_tags.close()
 # f_nodes.close()
 # f_nodes_tags.close()
