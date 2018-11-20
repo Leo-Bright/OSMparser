@@ -23,25 +23,25 @@ class OSMCounter(object):
             if len(node_vec) < 10:
                 output.write(line.strip() + '\n')
                 continue
-            if osmid not in self.nodeDic.keys():
-                output.write(line + ' ' + '-1' + '\n')
-                continue
-            node_tags = self.nodeDic[osmid][0]
-            if 'crossing' in node_tags.keys():
-                print('crossing key in the tags')
-                output.write(line + ' ' + '1' + '\n')
-                self.crossing_count += 1
-            elif 'highway' in node_tags.keys():
-                if 'crossing' == node_tags['highway']:
-                    print('highway key and crossing value in the tags')
+            if osmid in self.nodeDic.keys():
+                node_tags = self.nodeDic[osmid][0]
+                if 'crossing' in node_tags.keys():
+                    print('crossing key in the tags')
                     output.write(line + ' ' + '1' + '\n')
                     self.crossing_count += 1
-                else:
-                    print('this is not a crossing')
-                    output.write(line + ' ' + '-1' + '\n')
+                elif 'highway' in node_tags.keys():
+                    if 'crossing' == node_tags['highway']:
+                        print('highway key and crossing value in the tags')
+                        output.write(line + ' ' + '1' + '\n')
+                        self.crossing_count += 1
+                    else:
+                        print('this is not a crossing')
+                        output.write(line + ' ' + '-1' + '\n')
 
+                else:
+                    print('this is a coords')
+                    output.write(line + ' ' + '-1' + '\n')
             else:
-                print('this is not a crossing')
                 output.write(line + ' ' + '-1' + '\n')
 
         print(self.crossing_count)
