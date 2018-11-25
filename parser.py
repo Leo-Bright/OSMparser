@@ -117,7 +117,9 @@ class OSMCounter(object):
     def nodes(self, nodes):
         # callback method for nodes
         for osmid, tags, coordinary in nodes:
-            self.nodeDic[osmid] = (tags, coordinary)
+            if 'highway' in tags:
+                if 'crossing' == tags['highway']:
+                    self.nodeDic[osmid] = (tags, coordinary)
 
     def coords(self, coords):
         # callback method for coords
@@ -138,17 +140,17 @@ p.parse('Porto.osm.pbf')
 
 
 #### write the ways result to file
-f_ways = open(r'dataset/ways_highway_forLINE_v1.0.result', 'w+')
-counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False, allNodes=True, forLINE=True)
+f_ways = open(r'dataset/ways_highway_allNodes.result', 'w+')
+counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False, allNodes=True, forLINE=False)
 f_ways.close()
 
 
 #### write the nodes result to file
-# f_nodes = open(r'dataset/nodes.result', 'w+')
-# for item in counter.nodeDic.items():
-#     print(item)
-#     f_nodes.write(item.__str__() + '\n')
-# f_nodes.close()
+f_nodes = open(r'dataset/nodes_crossing.result', 'w+')
+for item in counter.nodeDic.items():
+    print(item)
+    f_nodes.write(item.__str__() + '\n')
+f_nodes.close()
 
 
 #### write the coords result to file
