@@ -57,4 +57,14 @@ for item in node_way_map.items():
     f_nodes_statistic.write(item.__str__() + '\n')
 f_nodes_statistic.close()
 
+statistic_result = {}
+for osmid, (node_info, waysList) in node_way_map.items():
+    lenth = len(waysList)
+    if lenth not in statistic_result:
+        statistic_result[lenth] = 1
+    else:
+        statistic_result[lenth] += 1
+
+for item in statistic_result.items():
+    print(item)
 
