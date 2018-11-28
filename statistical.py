@@ -40,8 +40,9 @@ p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.
 p.parse('Porto.osm.pbf')
 
 #### write the nodes result to file
-f_nodes_statistic = open(r'dataset/nodes_crossing_statistic.result', 'w+')
+f_nodes_statistic = open(r'dataset/nodes_intersection.json', 'w+')
 node_way_map = {}  # {node_osmid:(way_osmid, ...)}
+intersection_nodes = {} # {2:{osmid_node:(node_info,[osmid_way,...])},3:{},4{}}
 for osmid,(tags, refs) in counter.wayDic.items():
     for node_osmid in refs:
         if node_osmid in counter.nodeDic:
@@ -53,18 +54,17 @@ for osmid,(tags, refs) in counter.wayDic.items():
         else:
             node_way_map[node_osmid][1].append(osmid)
 
-for item in node_way_map.items():
-    f_nodes_statistic.write(item.__str__() + '\n')
+for osmid, (node_info,ways_list) in node_way_map.items():
+    # f_nodes_statistic.write(item.__str__() + '\n')
+    intersect_num = len(ways_list)
+    if 1 < intersect_num < 5:
+        if intersect_num not in intersection_nodes:
+            intersection_nodes[intersect_num] = {}
+        intersection_nodes[intersect_num][osmid] = (node_info, ways_list)
+
+# for item in intersection_nodes.items():
+#     f_nodes_statistic.write(item.__str__() + '\n')
+
+f_nodes_statistic.write(json.dumps(intersection_nodes))
+
 f_nodes_statistic.close()
-
-statistic_result = {}
-for osmid, (node_info, waysList) in node_way_map.items():
-    lenth = len(waysList)
-    if lenth not in statistic_result:
-        statistic_result[lenth] = 1
-    else:
-        statistic_result[lenth] += 1
-
-for item in statistic_result.items():
-    print(item)
-
