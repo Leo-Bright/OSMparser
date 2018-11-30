@@ -4,10 +4,10 @@ import json
 
 # simple class that handles the parsed OSM data.
 class OSMCounter(object):
-    relationDic = {} #{osmid:(tags, refs)}
+    relationDic = {} #{osmid:(tag, refs)}
     coordDic = {} #{osmid:(lat, lon)}
-    nodeDic = {} #{osmid:(tags, coordinary)}
-    wayDic = {} #{osmid:(tags, refs)}
+    nodeDic = {} #{osmid:(tag, coordinary)}
+    wayDic = {} #{osmid:(tag, refs)}
     crossing_count = 0
 
     # osmid : do write the way's osmid to the result file ?
@@ -26,12 +26,12 @@ class OSMCounter(object):
             if osmid in self.nodeDic.keys():
                 node_tags = self.nodeDic[osmid][0]
                 if 'crossing' in node_tags.keys():
-                    print('crossing key in the tags')
+                    print('crossing key in the tag')
                     output.write(line + ' ' + '1' + '\n')
                     self.crossing_count += 1
                 elif 'highway' in node_tags.keys():
                     if 'crossing' == node_tags['highway']:
-                        print('highway key and crossing value in the tags')
+                        print('highway key and crossing value in the tag')
                         output.write(line + ' ' + '1' + '\n')
                         self.crossing_count += 1
                     else:
@@ -66,7 +66,7 @@ class OSMCounter(object):
         for osmid, tags, refs in ways:
             if 'highway' in tags:
                 self.wayDic[osmid] = (tags, refs)
-            # self.wayDic[osmid] = (tags, refs)
+            # self.wayDic[osmid] = (tag, refs)
 
     def nodes(self, nodes):
         # callback method for nodes

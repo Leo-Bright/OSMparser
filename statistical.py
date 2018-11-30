@@ -4,10 +4,10 @@ import json
 
 # simple class that handles the parsed OSM data.
 class OSMCounter(object):
-    relationDic = {} #{osmid:(tags, refs)}
+    relationDic = {} #{osmid:(tag, refs)}
     coordDic = {} #{osmid:(lat, lon)}
-    nodeDic = {} #{osmid:(tags, coordinary)}
-    wayDic = {} #{osmid:(tags, refs)}
+    nodeDic = {} #{osmid:(tag, coordinary)}
+    wayDic = {} #{osmid:(tag, refs)}
 
     def ways(self, ways):
         # callback method for ways
