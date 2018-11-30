@@ -136,17 +136,17 @@ class OSMCounter(object):
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('Porto.osm.pbf')
+p.parse('porto/dataset/Porto.osm.pbf')
 
 
 #### write the ways result to file
-f_ways = open(r'dataset/ways_highway_allNodes.result', 'w+')
+f_ways = open(r'porto/dataset/ways_highway_allNodes.result', 'w+')
 counter.print_ways_result(f_ways, osmid=False, tag=False, coordinate=False, allNodes=True, forLINE=False)
 f_ways.close()
 
 
 #### write the nodes result to file
-f_nodes = open(r'dataset/nodes_crossing.result', 'w+')
+f_nodes = open(r'porto/dataset/nodes_crossing.result', 'w+')
 for item in counter.nodeDic.items():
     print(item)
     f_nodes.write(item.__str__() + '\n')

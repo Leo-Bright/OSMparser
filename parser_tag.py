@@ -10,7 +10,7 @@ class OSMCounter(object):
     highwayDic = {} #{osmid:(tag, refs)}
     wayDic = {} #{osmid:(tag, refs)}
 
-    def count_tags(self, output_file, type='way', output='formal', order=True):
+    def count_tags(self, output_file, type='way', output='formal', order=True, selected_node_path = 'porto/network/selected_nodes.json'):
         tagsDict = {}  # {key:{value:count}}
         tagsCountList = []  # [(key,value,count)]
         if type == 'way':
@@ -21,11 +21,11 @@ class OSMCounter(object):
             objDict = self.nodeDic
         if type == 'selected_node':
             try:
-                f_selected_nodes = open(r'network/selected_nodes.json', 'r')
+                f_selected_nodes = open(selected_node_path, 'r')
                 objDict = json.loads(f_selected_nodes.readline())
                 f_selected_nodes.close()
             except:
-                objDict = {'note':'selected_nodes.json file not found'}
+                objDict = {}
         for osmid, tags_and_others in objDict.items():
             tags = tags_and_others[0]
             for k, v in tags.items():
@@ -80,24 +80,24 @@ class OSMCounter(object):
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('dataset/Porto.osm.pbf')
+p.parse('porto/dataset/Porto.osm.pbf')
 
 # write the way's tag to file
-f_ways_tags = open(r'tag/ways.tag', 'w+')
+f_ways_tags = open(r'porto/tag/ways.tag', 'w+')
 counter.count_tags(f_ways_tags, type='way', output='formal', order=True)
 f_ways_tags.close()
 
 # write the highway's tag to file
-f_highway_tags = open(r'tag/highway.tag', 'w+')
+f_highway_tags = open(r'porto/tag/highway.tag', 'w+')
 counter.count_tags(f_highway_tags, type='highway', output='formal', order=True)
 f_highway_tags.close()
 
 # write the node's tag to file
-f_nodes_tags = open(r'tag/nodes.tag', 'w+')
+f_nodes_tags = open(r'porto/tag/nodes.tag', 'w+')
 counter.count_tags(f_nodes_tags, type='node', output='formal', order=True)
 f_nodes_tags.close()
 
 # write the selected_node's tag to file
-f_selected_nodes_tag = open(r'tag/selected_nodes.tag', 'w+')
-counter.count_tags(f_selected_nodes_tag, type='selected_node', output='formal', order=True)
+f_selected_nodes_tag = open(r'porto/tag/selected_nodes.tag', 'w+')
+counter.count_tags(f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'porto/network/selected_nodes.json')
 f_selected_nodes_tag.close()
