@@ -82,20 +82,20 @@ p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.
               coords_callback=counter.coords, relations_callback=counter.relations)
 p.parse('dataset/Porto.osm.pbf')
 
-# # write the way's tag to file
-# f_ways_tags = open(r'tag/ways.tag', 'w+')
-# counter.count_tags(f_ways_tags, type='way', output='formal', order=True)
-# f_ways_tags.close()
-#
-# # write the highway's tag to file
-# f_highway_tags = open(r'tag/highway.tag', 'w+')
-# counter.count_tags(f_highway_tags, type='highway', output='formal', order=True)
-# f_highway_tags.close()
-#
-# # write the node's tag to file
-# f_nodes_tags = open(r'tag/nodes.tag', 'w+')
-# counter.count_tags(f_nodes_tags, type='node', output='formal', order=True)
-# f_nodes_tags.close()
+# write the way's tag to file
+f_ways_tags = open(r'tag/ways.tag', 'w+')
+counter.count_tags(f_ways_tags, type='way', output='formal', order=True)
+f_ways_tags.close()
+
+# write the highway's tag to file
+f_highway_tags = open(r'tag/highway.tag', 'w+')
+counter.count_tags(f_highway_tags, type='highway', output='formal', order=True)
+f_highway_tags.close()
+
+# write the node's tag to file
+f_nodes_tags = open(r'tag/nodes.tag', 'w+')
+counter.count_tags(f_nodes_tags, type='node', output='formal', order=True)
+f_nodes_tags.close()
 
 # write the selected_node's tag to file
 f_selected_nodes_tag = open(r'tag/selected_nodes.tag', 'w+')
