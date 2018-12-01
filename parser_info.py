@@ -59,7 +59,7 @@ f_nodes_info.close()
 
 
 # write the all coords info to file
-f_coords_info = open(r'porto/info/coords.result', 'w+')
+f_coords_info = open(r'porto/info/coords.info', 'w+')
 for item in counter.coordDic.items():
     f_coords_info.write(item.__str__() + '\n')
 f_coords_info.close()
