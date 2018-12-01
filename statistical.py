@@ -69,7 +69,8 @@ for osmid, (node_info,ways_list) in node_highway_map.items():
         if intersect_num not in intersection_nodes:
             intersection_nodes[intersect_num] = {}
         intersection_nodes[intersect_num][osmid] = (node_info, ways_list)
-
+for key, value in intersection_nodes.items():
+    print(str(key)+" : " + str(len(value.keys())))
 for item in intersection_nodes[2].items():
     f_nodes_intersection_data2.write(item.__str__() + '\n')
 
