@@ -22,7 +22,7 @@ class OSMCounter(object):
         # callback method for nodes
         for osmid, tags, coordinary in nodes:
             if 'highway' in tags:
-                if 'crossing' == tags['highway']:
+                if 'traffic_signals' == tags['highway']:
                     self.crossing_nodes[osmid] = (tags, coordinary)
             self.nodeDic[osmid] = (tags, coordinary)
 
@@ -41,13 +41,13 @@ class OSMCounter(object):
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('porto/dataset/Porto.osm.pbf')
+p.parse('sanfrancisco/dataset/SanFrancisco.osm.pbf')
 
 # write the intersection nodes result to file
-f_nodes_intersection_json = open(r'porto/dataset/nodes_intersection.json', 'w+')
-f_nodes_intersection_data2 = open(r'porto/dataset/nodes_intersection2.data', 'w+')
-f_nodes_intersection_data3 = open(r'porto/dataset/nodes_intersection3.data', 'w+')
-f_nodes_intersection_data4 = open(r'porto/dataset/nodes_intersection4.data', 'w+')
+f_nodes_intersection_json = open(r'sanfrancisco/dataset/nodes_intersection.json', 'w+')
+f_nodes_intersection_data2 = open(r'sanfrancisco/dataset/nodes_intersection2.data', 'w+')
+f_nodes_intersection_data3 = open(r'sanfrancisco/dataset/nodes_intersection3.data', 'w+')
+f_nodes_intersection_data4 = open(r'sanfrancisco/dataset/nodes_intersection4.data', 'w+')
 
 node_highway_map = {}  # {node_osmid:(way_osmid, ...)}
 for osmid, (tags, refs) in counter.highwayDic.items():
@@ -86,8 +86,8 @@ f_nodes_intersection_json.close()
 
 
 # write the crossing nodes result to file
-f_nodes_crossing_json = open(r'porto/dataset/nodes_crossing.json', 'w+')
-f_nodes_crossing_data = open(r'porto/dataset/nodes_crossing.data', 'w+')
+f_nodes_crossing_json = open(r'sanfrancisco/dataset/nodes_traffic_signals.json', 'w+')
+f_nodes_crossing_data = open(r'sanfrancisco/dataset/nodes_traffic_signals.data', 'w+')
 
 f_nodes_crossing_json.write(json.dumps(counter.crossing_nodes))
 f_nodes_crossing_json.close()
