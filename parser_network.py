@@ -13,7 +13,7 @@ class OSMCounter(object):
     # osmid : do write the way's osmid to the result file ?
     # tag : do write the tag to the result  ?
     # refs_index: select the index of refs you want
-    def print_ways_result(self, output_file, osmid=False, tag=False, allNodes=False, forLINE=False):
+    def print_ways_result(self, output_file, osmid=False, tag=False, allNodes=False, onlyNode=False, forLINE=False):
 
         for item in self.highwayDic.items():
             refs = item[1][-1]
@@ -24,7 +24,14 @@ class OSMCounter(object):
 
             nodes = []
             if allNodes:
-                nodes = refs
+                if not onlyNode:
+                    nodes = refs
+                else:
+                    nodes.append(refs[0])
+                    for ref in range(1, len(refs)-1):
+                        if ref in self.nodeDic:
+                            nodes.append(ref)
+                    nodes.append(refs[-1])
             else:
                 nodes.append(refs[0])
                 nodes.append(refs[-1])
@@ -66,15 +73,15 @@ class OSMCounter(object):
 # instantiate counter and parser and start parsing Proto ways
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes, coords_callback=counter.coords)
-p.parse('porto/dataset/Porto.osm.pbf')
+p.parse('sanfrancisco/dataset/SanFrancisco.osm.pbf')
 
 
 # highways road network with all nodes
-f_highway_network = open(r'porto/network/highway_allNodes.network', 'w+')
-counter.print_ways_result(f_highway_network, allNodes=True, forLINE=False)
+f_highway_network = open(r'sanfrancisco/network/highway_onlyNode.network', 'w+')
+counter.print_ways_result(f_highway_network, allNodes=True, onlyNode=True, forLINE=False)
 f_highway_network.close()
 
 # selected nodes in the network
-f_selected_nodes = open(r'porto/network/selected_nodes.json', 'w+')
+f_selected_nodes = open(r'sanfrancisco/network/selected_nodes_onlyNode.json', 'w+')
 f_selected_nodes.write(json.dumps(counter.selected_node_dic))
 f_selected_nodes.close()

@@ -26,6 +26,7 @@ class OSMCounter(object):
                 f_selected_nodes.close()
             except:
                 objDict = {}
+            print("selected nodes count:", len(objDict.keys()))
         for osmid, tags_and_others in objDict.items():
             tags = tags_and_others[0]
             for k, v in tags.items():
@@ -98,6 +99,6 @@ counter.count_tags(f_nodes_tags, type='node', output='formal', order=True)
 f_nodes_tags.close()
 
 # write the selected_node's tag to file
-f_selected_nodes_tag = open(r'sanfrancisco/tag/selected_nodes.tag', 'w+')
-counter.count_tags(f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'sanfrancisco/network/selected_nodes.json')
+f_selected_nodes_tag = open(r'sanfrancisco/tag/selected_nodes_onlyNode.tag', 'w+')
+counter.count_tags(f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'sanfrancisco/network/selected_nodes_onlyNode.json')
 f_selected_nodes_tag.close()
