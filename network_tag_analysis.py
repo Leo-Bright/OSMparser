@@ -55,6 +55,7 @@ class OSMCounter(object):
                                 value = value.encode('utf8')
                             output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
         print("have nodes: ", len(nodes_count))
+        print("have roads: ", len(road_segments))
 
     def ways(self, ways):
         # callback method for ways
