@@ -13,8 +13,11 @@ class OSMCounter(object):
     def count_tags(self, road_segments, output_type='formal', order=True, output_path='selected_nodes.tag'):
         tagsDict = {}  # {key:{value:count}}
         tagsCountList = []  # [(key,value,count)]
+        nodes_count = set()
         for road_segment in road_segments:
             gid, osm_id, source, target, reverse, priority = road_segment
+            nodes_count.add(source)
+            nodes_count.add(target)
             if source in self.nodeDic:
                 (tags, coordinary) = self.nodeDic[source]
                 for k, v in tags.items():
@@ -51,6 +54,7 @@ class OSMCounter(object):
                             if not isinstance(value, int):
                                 value = value.encode('utf8')
                             output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
+        print("have nodes: ", len(nodes_count))
 
     def ways(self, ways):
         # callback method for ways
