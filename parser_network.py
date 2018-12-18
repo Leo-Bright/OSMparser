@@ -28,9 +28,9 @@ class OSMCounter(object):
                     nodes = refs
                 else:
                     nodes.append(refs[0])
-                    for ref in range(1, len(refs)-1):
-                        if ref in self.nodeDic:
-                            nodes.append(ref)
+                    for ref_index in range(1, len(refs)-1):
+                        if refs[ref_index] in self.nodeDic:
+                            nodes.append(refs[ref_index])
                     nodes.append(refs[-1])
             else:
                 nodes.append(refs[0])
