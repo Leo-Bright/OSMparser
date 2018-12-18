@@ -18,17 +18,9 @@ class OSMCounter(object):
             gid, osm_id, source, target, reverse, priority = road_segment
             nodes_count.add(source)
             nodes_count.add(target)
-            if source in self.nodeDic:
-                (tags, coordinary) = self.nodeDic[source]
-                for k, v in tags.items():
-                    if k not in tagsDict:
-                        tagsDict[k] = {}
-                    if v not in tagsDict[k]:
-                        tagsDict[k][v] = 1
-                    else:
-                        tagsDict[k][v] += 1
-            if target in self.nodeDic:
-                (tags, coordinary) = self.nodeDic[target]
+        for node in nodes_count:
+            if node in self.nodeDic:
+                (tags, coordinary) = self.nodeDic[node]
                 for k, v in tags.items():
                     if k not in tagsDict:
                         tagsDict[k] = {}
