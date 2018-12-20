@@ -68,7 +68,7 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
                 node_type_file.write(str(node) + ' 2\n')
             elif node in intersection_3:
                 node_type_file.write(str(node) + ' 3\n')
-            elif node in intersection_3:
+            elif node in intersection_4:
                 node_type_file.write(str(node) + ' 4\n')
             else:
                 node_type_file.write(str(node) + ' 1\n')
