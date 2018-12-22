@@ -177,6 +177,52 @@ class Graph(defaultdict):
     self.k_hop_neighbors[k][id_] = neighbors
     return neighbors
 
+  def _get_shortest_path(self):
+
+
+    '''
+    build shortest_path matrix
+    :return: shortest_path , {from_node_id : {to_node_id : {path : [node_id1, node_id2,...], cost : <int>}}}
+    '''
+
+    def get_shortest_path_node(shortest_path, from_node, processed):
+      path_length = float("inf")
+      shortest_path_node = None
+      for to_node in shortest_path[from_node]:
+          if to_node in processed:
+            continue
+          path_cost = shortest_path[from_node][to_node]['cost']
+          if path_cost < path_length:
+            path_length = path_cost
+            shortest_path_node = to_node
+      return shortest_path_node
+
+    shortest_path = {}
+    for from_node in self:
+      shortest_path[from_node] = {}
+      for to_node in self[from_node]:
+        shortest_path[from_node][to_node] = {'path': [to_node], 'cost': 1}
+
+    for from_node in shortest_path:
+      processed = set()
+      to_node = get_shortest_path_node(shortest_path, from_node, processed)
+      while to_node:
+        cost = shortest_path[from_node][to_node]['cost']
+        neighbors = self[to_node]
+        for neighbor in neighbors:
+          new_cost = cost + shortest_path[to_node][neighbor]['cost']
+          if neighbor not in shortest_path[from_node]:
+            shortest_path[from_node][neighbor] = {}
+            shortest_path[from_node][neighbor]['cost'] = new_cost
+            shortest_path[from_node][neighbor]['path'] = shortest_path[from_node][to_node]['path'] + [neighbor]
+          elif shortest_path[from_node][neighbor]['cost'] > new_cost:
+            shortest_path[from_node][neighbor]['cost'] = new_cost
+            shortest_path[from_node][neighbor]['path'] = shortest_path[from_node][to_node]['path'] + shortest_path[from_node][neighbor]['path']
+        processed.add(to_node)
+        to_node = get_shortest_path_node(shortest_path, from_node, processed)
+
+    return shortest_path
+
 # TODO add build_walks in here
 
 def build_deepwalk_corpus(G, num_paths, path_length, alpha=0,
@@ -202,6 +248,29 @@ def build_deepwalk_corpus_iter(G, num_paths, path_length, alpha=0,
     rand.shuffle(nodes)
     for node in nodes:
       yield G.random_walk(path_length, rand=rand, alpha=alpha, start=node)
+
+
+def build_shortest_path(G, num_paths, rand=random.Random(0)):
+
+  walks = []
+
+  nodes = list(G.nodes())
+  shortest_path = G._get_shortest_path()
+
+  walk_count = 0
+  while num_paths - walk_count > 0:
+    rand.shuffle(nodes)
+    x = random.randint(0, len(nodes))
+    y = random.randint(0, len(nodes))
+    while x == y:
+      y = random.randint(0, len(nodes))
+    node_x = nodes[x]
+    node_y = nodes[y]
+    while node_y not in shortest_path[node_x]:
+      continue
+    walks.append([node_x] + shortest_path[node_x][node_y]['path'])
+    walk_count += 1
+
 
 
 def clique(size):
