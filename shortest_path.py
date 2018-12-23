@@ -94,4 +94,4 @@ main(network_input="sanfrancisco/network/sf_roadnetwork",
      intersection_input="sanfrancisco/dataset/nodes_intersection.json",
      walks_output="sanfrancisco/network/sf_shortest_path.walks",
      node_type_output="sanfrancisco/dataset/node_type.txt",
-     walk_num=5)
+     walk_num=10)
