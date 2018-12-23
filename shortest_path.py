@@ -42,15 +42,9 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
 
 
     with open(walks_output, 'w+') as f:
-        count = 0
         for node_walks in everynode_walks:
             for walk in node_walks:
                 f.write('%s\n' % ' 0 '.join(map(str, walk)))
-            count += 1
-            if count >= 5:
-                break
-
-    return
 
     print("Walking done...")
 
