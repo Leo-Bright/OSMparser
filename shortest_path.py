@@ -37,8 +37,8 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
 
     random_walk_json = network_input.rsplit('/', 1)[0] + '/tmp_walk_fname.json'
 
-    with open(random_walk_json, 'w+') as tmp_walks:
-        tmp_walks.write(json.dumps(walks))
+    # with open(random_walk_json, 'w+') as tmp_walks:
+    #     tmp_walks.write(json.dumps(walks))
 
 
     with open(walks_output, 'w+') as f:
@@ -80,5 +80,5 @@ main(network_input="sanfrancisco/network/sf_roadnetwork",
      intersection_input="sanfrancisco/dataset/nodes_intersection.json",
      walks_output="sanfrancisco/network/sf_shortest_path.walks",
      node_type_output="sanfrancisco/dataset/node_type.txt",
-     walk_num=5, walk_length=60
+     walk_num=1, walk_length=60
      )
