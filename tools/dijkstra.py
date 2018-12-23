@@ -1,4 +1,3 @@
-import time
 import heapq
 import copy
 
@@ -13,7 +12,6 @@ def dijkstra(G, start):     # dijkstra algorithm
     pq = []    # store values in heap
     heapq.heappush(pq, [dis[start], start])
 
-    t3 = time.time()
     path = dict((key, [start]) for key in G)    # record every shortest path from start to end
     while len(pq) > 0:
         v_dis, v = heapq.heappop(pq)    # get the shortest path and node in unvisited nodes.
@@ -32,7 +30,4 @@ def dijkstra(G, start):     # dijkstra algorithm
                 temp = copy.copy(p)
                 temp.append(node)    # update the path of start to node
                 path[node] = temp
-
-    t4 = time.time()
-    print('Dijkstra use time :', t4-t3)
     return dis, path

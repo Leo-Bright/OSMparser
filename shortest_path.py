@@ -4,6 +4,7 @@
 from tools import graph
 import random
 import json
+import sys
 
 
 __author__ = 'Leo'
@@ -42,9 +43,20 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
 
 
     with open(walks_output, 'w+') as f:
+        count = 0
         for node_walks in everynode_walks:
             for walk in node_walks:
                 f.write('%s\n' % ' 0 '.join(map(str, walk)))
+            count += 1
+            if count % 100 == 0:
+                ratio = float(count * walk_num) / num_walks
+                sys.stdout.write(("\rwalking ratio is :"
+                                  "%d/%d (%.2f%%) "
+                                  "" % (count,
+                                        num_walks / walk_num,
+                                        ratio * 100,
+                                        )))
+                sys.stdout.flush()
 
     print("Walking done...")
 
