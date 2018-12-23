@@ -48,7 +48,7 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
             for walk in node_walks:
                 f.write('%s\n' % ' 0 '.join(map(str, walk)))
             count += 1
-            if count % 100 == 0:
+            if count % 10 == 0:
                 ratio = float(count * walk_num) / num_walks
                 sys.stdout.write(("\rwalking ratio is :"
                                   "%d/%d (%.2f%%) "
