@@ -17,6 +17,8 @@ from random import shuffle
 from itertools import product,permutations
 from scipy.io import loadmat
 from scipy.sparse import issparse
+from dijkstra import dijkstra
+
 
 logger = logging.getLogger("deepwalk")
 
@@ -27,7 +29,7 @@ __email__ = "bperozzi@cs.stonybrook.edu"
 LOGFORMAT = "%(asctime).19s %(levelname)s %(filename)s: %(lineno)s %(message)s"
 
 class Graph(defaultdict):
-  """Efficient basic implementation of nx `Graph' â€“ Undirected graphs with self loops"""  
+  """Efficient basic implementation of nx `Graph' â€“ Undirected graphs with self loops"""
   def __init__(self):
     super(Graph, self).__init__(list)
 
@@ -39,22 +41,22 @@ class Graph(defaultdict):
 
   def subgraph(self, nodes={}):
     subgraph = Graph()
-    
+
     for n in nodes:
       if n in self:
         subgraph[n] = [x for x in self[n] if x in nodes]
-        
+
     return subgraph
 
   def make_undirected(self):
-  
+
     t0 = time()
 
     for v in self.keys():
       for other in self[v]:
         if v != other:
           self[other].append(v)
-    
+
     t1 = time()
     logger.info('make_directed: added missing edges {}s'.format(t1-t0))
 
@@ -65,7 +67,7 @@ class Graph(defaultdict):
     t0 = time()
     for k in iterkeys(self):
       self[k] = list(sorted(set(self[k])))
-    
+
     t1 = time()
     logger.info('make_consistent: made consistent in {}s'.format(t1-t0))
 
@@ -79,10 +81,10 @@ class Graph(defaultdict):
     t0 = time()
 
     for x in self:
-      if x in self[x]: 
+      if x in self[x]:
         self[x].remove(x)
         removed += 1
-    
+
     t1 = time()
 
     logger.info('remove_self_loops: removed {} loops in {}s'.format(removed, (t1-t0)))
@@ -93,7 +95,7 @@ class Graph(defaultdict):
       for y in self[x]:
         if x == y:
           return True
-    
+
     return False
 
   def has_edge(self, v1, v2):
@@ -109,7 +111,7 @@ class Graph(defaultdict):
 
   def order(self):
     "Returns the number of nodes in the graph"
-    return len(self)    
+    return len(self)
 
   def number_of_edges(self):
     "Returns the number of nodes in the graph"
@@ -184,6 +186,13 @@ class Graph(defaultdict):
       for to_node in self[from_node]:
         self.shortest_path[from_node][to_node] = {'path': [to_node], 'cost': 1}
 
+  def init_shortest_path_v2(self):
+    self.shortest_path = {}
+    for from_node in self:
+      self.shortest_path[from_node] = {}
+      for to_node in self[from_node]:
+        self.shortest_path[from_node][to_node] = 1
+
   def _get_shortest_path(self, end, start=None):
 
 
@@ -233,6 +242,7 @@ class Graph(defaultdict):
     else:
       return []
 
+
 # TODO add build_walks in here
 
 def build_deepwalk_corpus(G, num_paths, path_length, alpha=0,
@@ -262,19 +272,23 @@ def build_deepwalk_corpus_iter(G, num_paths, path_length, alpha=0,
 
 def build_shortest_path(G, num_paths, rand=random.Random(0)):
 
-  walks = []
-
   nodes = list(G.nodes())
 
-  for cnt in range(num_paths):
-    rand.shuffle(nodes)
-    for node in nodes:
-      y = random.randint(0, len(nodes))
+  rand.shuffle(nodes)
+  for node in nodes:
+    dis, path = dijkstra(G.shortest_path, node)
+    visited = set()
+    visited.add(node)
+    node_walks = []
+    while len(node_walks) < num_paths:
+      y = random.randint(0, len(nodes) - 1)
       node_y = nodes[y]
-      while node == node_y:
-        y = random.randint(0, len(nodes))
-        node_y = nodes[y]
-      yield G._get_shortest_path(node_y, start=node)
+      if node_y in visited:
+        continue
+      if dis[node_y] < float("inf"):
+        node_walks.append(path[node_y])
+      visited.add(node_y)
+    yield node_walks
 
 
 def clique(size):
@@ -353,9 +367,9 @@ def load_edgelist(file_, undirected=True):
       G[x].append(y)
       if undirected:
         G[y].append(x)
-  
+
   G.make_consistent()
-  G.init_shortest_path()
+  G.init_shortest_path_v2()
   return G
 
 

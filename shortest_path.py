@@ -33,7 +33,7 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
     # walks = graph.build_deepwalk_corpus(G, num_paths=walk_num,
     #                                     path_length=walk_length, alpha=0, rand=random.Random(0))
 
-    walks = graph.build_shortest_path(G, num_paths=walk_num, rand=random.Random(0))
+    everynode_walks = graph.build_shortest_path(G, num_paths=walk_num, rand=random.Random(0))
 
     random_walk_json = network_input.rsplit('/', 1)[0] + '/tmp_walk_fname.json'
 
@@ -42,8 +42,15 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
 
 
     with open(walks_output, 'w+') as f:
-        for walk in walks:
-            f.write('%s\n' % ' 0 '.join(map(str, walk)))
+        count = 0
+        for node_walks in everynode_walks:
+            for walk in node_walks:
+                f.write('%s\n' % ' 0 '.join(map(str, walk)))
+            count += 1
+            if count >= 5:
+                break
+
+    return
 
     print("Walking done...")
 
@@ -57,9 +64,10 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
         intersection_4 = intersection["4"]
 
     nodes = set()
-    for walk in walks:
-        for node in walk:
-            nodes.add(node)
+    for node_walks in everynode_walks:
+        for walk in node_walks:
+            for node in walk:
+                nodes.add(node)
 
     sorted_nodes = list(nodes)
     sorted_nodes.sort()
@@ -80,5 +88,4 @@ main(network_input="sanfrancisco/network/sf_roadnetwork",
      intersection_input="sanfrancisco/dataset/nodes_intersection.json",
      walks_output="sanfrancisco/network/sf_shortest_path.walks",
      node_type_output="sanfrancisco/dataset/node_type.txt",
-     walk_num=1, walk_length=60
-     )
+     walk_num=5)
