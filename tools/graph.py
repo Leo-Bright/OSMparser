@@ -177,14 +177,14 @@ class Graph(defaultdict):
     self.k_hop_neighbors[k][id_] = neighbors
     return neighbors
 
-  def build_shortest_path(self):
+  def init_shortest_path(self):
     self.shortest_path = {}
     for from_node in self:
       self.shortest_path[from_node] = {}
       for to_node in self[from_node]:
         self.shortest_path[from_node][to_node] = {'path': [to_node], 'cost': 1}
 
-  def _get_shortest_path(self, end, rand=None, start=None):
+  def _get_shortest_path(self, end, start=None):
 
 
     '''
@@ -192,38 +192,44 @@ class Graph(defaultdict):
     :return: shortest_path , {from_node_id : {to_node_id : {path : [node_id1, node_id2,...], cost : <int>}}}
     '''
 
-    def get_shortest_path_node(shortest_path, start, processed):
+    def get_shortest_path_node(start_shortest_path, processed):
       path_length = float("inf")
       shortest_end = None
-      for end in shortest_path[start]:
+      for end in start_shortest_path:
           if end in processed:
             continue
-          path_cost = shortest_path[start][end]['cost']
+          path_cost = start_shortest_path[end]['cost']
           if path_cost < path_length:
             path_length = path_cost
             shortest_end = end
       return shortest_end
 
     shortest_path = self.shortest_path
+    start_shortest_path = shortest_path[start]
     processed = set()
-    to_node = get_shortest_path_node(shortest_path, start, processed)
-    while to_node:
-      cost = shortest_path[start][to_node]['cost']
-      neighbors = self[to_node]
-      for neighbor in neighbors:
-        new_cost = cost + shortest_path[to_node][neighbor]['cost']
-        if neighbor not in shortest_path[start]:
-          shortest_path[start][neighbor] = {}
-          shortest_path[start][neighbor]['cost'] = new_cost
-          shortest_path[start][neighbor]['path'] = shortest_path[start][to_node]['path'] + [neighbor]
-        elif shortest_path[start][neighbor]['cost'] > new_cost:
-          shortest_path[start][neighbor]['cost'] = new_cost
-          shortest_path[start][neighbor]['path'] = shortest_path[start][to_node]['path'] + shortest_path[start][neighbor]['path']
-      processed.add(to_node)
-      to_node = get_shortest_path_node(shortest_path, start, processed)
+    to_node = get_shortest_path_node(start_shortest_path, processed)
 
-    if end in shortest_path[start]:
-      return [start] + shortest_path[start][end]['path']
+    while to_node:
+
+      to_node_shortest_path = shortest_path[to_node]
+      cost = start_shortest_path[to_node]['cost']
+      neighbors = self[to_node]
+
+      for neighbor in neighbors:
+        new_cost = cost + to_node_shortest_path[neighbor]['cost']
+        if neighbor not in start_shortest_path:
+          start_shortest_path[neighbor] = {}
+          start_shortest_path[neighbor]['cost'] = new_cost
+          start_shortest_path[neighbor]['path'] = start_shortest_path[to_node]['path'] + [neighbor]
+        elif start_shortest_path[neighbor]['cost'] > new_cost:
+          start_shortest_path[neighbor]['cost'] = new_cost
+          start_shortest_path[neighbor]['path'] = start_shortest_path[to_node]['path'] + start_shortest_path[neighbor]['path']
+
+      processed.add(to_node)
+      to_node = get_shortest_path_node(start_shortest_path, processed)
+
+    if end in start_shortest_path:
+      return [start] + start_shortest_path[end]['path']
     else:
       return []
 
@@ -268,7 +274,7 @@ def build_shortest_path(G, num_paths, rand=random.Random(0)):
       while node == node_y:
         y = random.randint(0, len(nodes))
         node_y = nodes[y]
-      yield G._get_shortest_path(node_y, rand=rand, start=node)
+      yield G._get_shortest_path(node_y, start=node)
 
 
 def clique(size):
@@ -349,7 +355,7 @@ def load_edgelist(file_, undirected=True):
         G[y].append(x)
   
   G.make_consistent()
-  G.build_shortest_path()
+  G.init_shortest_path()
   return G
 
 
