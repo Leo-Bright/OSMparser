@@ -78,7 +78,7 @@ def walk_process(pid, nodes, G, walk_num, output):
         for node_walks in everynode_walks:
             for walk in node_walks:
                 f.write('%s\n' % ' 0 '.join(map(str, walk)))
-                node_count += 1
+            node_count += 1
             if node_count % 50 == 0:
                 ratio = float(node_count) / nodes_in_process
                 sys.stdout.write(("\rPID <%d> walking ratio is :"
