@@ -34,5 +34,5 @@ def dijkstra(G, start):     # dijkstra algorithm
                 path[node] = temp
 
     t4 = time.time()
-    print('Dijkstra use time :', t4-t3)
+    print('Dijkstra start form ' + start + ' use time :', t4-t3)
     return dis, path
