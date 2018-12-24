@@ -270,11 +270,8 @@ def build_deepwalk_corpus_iter(G, num_paths, path_length, alpha=0,
       yield G.random_walk(path_length, rand=rand, alpha=alpha, start=node)
 
 
-def build_shortest_path(G, num_paths, rand=random.Random(0)):
+def build_shortest_path(G, nodes, num_paths):
 
-  nodes = list(G.nodes())
-
-  rand.shuffle(nodes)
   for node in nodes:
     dis, path = dijkstra(G.shortest_path, node)
     visited = set()
