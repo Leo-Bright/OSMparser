@@ -26,7 +26,7 @@ def main(source_path, regex, output_filename):
     output_file.close()
 
 
-main(source_dir='sanfrancisco/network/',
+main(source_path='sanfrancisco/network/',
      regex='sf_shortest_path.walks_part',
-     output='sf_shortest_path.walks',
+     output_filename='sf_shortest_path.walks',
      )
