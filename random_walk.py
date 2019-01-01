@@ -54,8 +54,7 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
         for (type, node_set) in intersection.items():
             if node in node_set:
                 return type
-            else:
-                return '1'
+        return '1'
 
     nodes = set()
     for walk in walks:
