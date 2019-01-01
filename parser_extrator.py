@@ -48,6 +48,7 @@ f_nodes_intersection_json = open(r'sanfrancisco/dataset/nodes_intersection.json'
 f_nodes_intersection_data2 = open(r'sanfrancisco/dataset/nodes_intersection2.data', 'w+')
 f_nodes_intersection_data3 = open(r'sanfrancisco/dataset/nodes_intersection3.data', 'w+')
 f_nodes_intersection_data4 = open(r'sanfrancisco/dataset/nodes_intersection4.data', 'w+')
+f_nodes_intersection_data5 = open(r'sanfrancisco/dataset/nodes_intersection5.data', 'w+')
 
 node_highway_map = {}  # {node_osmid:(way_osmid, ...)}
 for osmid, (tags, refs) in counter.highwayDic.items():
@@ -62,10 +63,10 @@ for osmid, (tags, refs) in counter.highwayDic.items():
             node_highway_map[node_osmid][1].append(osmid)
 
 intersection_nodes = {} # {2:{osmid_node:(node_info,[osmid_way,...])},3:{},4{}}
-for osmid, (node_info,ways_list) in node_highway_map.items():
+for osmid, (node_info, ways_list) in node_highway_map.items():
     # f_nodes_statistic.write(item.__str__() + '\n')
     intersect_num = len(ways_list)
-    if 1 < intersect_num < 5:
+    if 1 < intersect_num:
         if intersect_num not in intersection_nodes:
             intersection_nodes[intersect_num] = {}
         intersection_nodes[intersect_num][osmid] = (node_info, ways_list)
@@ -79,6 +80,9 @@ for item in intersection_nodes[3].items():
 
 for item in intersection_nodes[4].items():
     f_nodes_intersection_data4.write(item.__str__() + '\n')
+
+for item in intersection_nodes[5].items():
+    f_nodes_intersection_data5.write(item.__str__() + '\n')
 
 f_nodes_intersection_json.write(json.dumps(intersection_nodes))
 f_nodes_intersection_json.close()

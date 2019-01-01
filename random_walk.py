@@ -47,12 +47,15 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
 
     print("Generating note type...")
 
-
     with open(intersection_input, 'r') as intersection_file:
         intersection = json.loads(intersection_file.readline())
-        intersection_2 = intersection["2"]
-        intersection_3 = intersection["3"]
-        intersection_4 = intersection["4"]
+
+    def get_node_tyep(intersection, node):
+        for (type, node_set) in intersection.items():
+            if node in node_set:
+                return type
+            else:
+                return '1'
 
     nodes = set()
     for walk in walks:
@@ -64,14 +67,9 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
 
     with open(node_type_output, 'w+') as node_type_file:
         for node in sorted_nodes:
-            if node in intersection_2:
-                node_type_file.write(str(node) + ' 2\n')
-            elif node in intersection_3:
-                node_type_file.write(str(node) + ' 3\n')
-            elif node in intersection_4:
-                node_type_file.write(str(node) + ' 4\n')
-            else:
-                node_type_file.write(str(node) + ' 1\n')
+            type = get_node_tyep(intersection, node)
+            node_type_file.write(str(node) + ' ' + type + '\n')
+
 
 
 main(network_input="sanfrancisco/network/sf_roadnetwork",
