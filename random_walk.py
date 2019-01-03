@@ -15,9 +15,9 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
          node_type_output="sanfrancisco/dataset/node_type.txt",
          walk_num=10, walk_length=100):
 
-    print 'Load a road Graph...'
+  #  print 'Load a road Graph...'
     G = graph.load_edgelist(network_input, undirected=True)
-    print 'Generate random walks...'
+  #  print 'Generate random walks...'
 
     print("Number of nodes: {}".format(len(G.nodes())))
 
