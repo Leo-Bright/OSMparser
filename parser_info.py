@@ -58,16 +58,18 @@ for item in counter.nodeDic.items():
 f_nodes_info.close()
 
 # write the all traffic info to file
-with open(r'sanfrancisco/info/traffic.json', 'w+') as f_traffic_info:
-    traffic_signlas = {'lat':[], 'lon':[]}
+key = 'crossing'
+value = 'zebra'
+with open(r'sanfrancisco/info/' + value + '.json', 'w+') as f_info:
+    crossing = {'lat':[], 'lon':[]}
     for node_id in counter.nodeDic:
         (tags, coordinary) = counter.nodeDic[node_id]
-        if 'highway' not in tags:
+        if key not in tags:
             continue
-        if 'traffic_signals' in tags['highway']:
-            traffic_signlas['lon'].append(str(coordinary[0]))
-            traffic_signlas['lat'].append(str(coordinary[1]))
-    f_traffic_info.write(json.dumps(traffic_signlas) + '\n')
+        if value in tags[key]:
+            crossing['lon'].append(str(coordinary[0]))
+            crossing['lat'].append(str(coordinary[1]))
+    f_info.write(json.dumps(crossing) + '\n')
 
 
 # write the all coords info to file
