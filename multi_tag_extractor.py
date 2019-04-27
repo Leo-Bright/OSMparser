@@ -42,35 +42,26 @@ cities = ['sanfrancisco/dataset/SanFrancisco.osm.pbf',
           'porto/dataset/Porto.osm.pbf',
           'tokyo/dataset/Tokyo.osm.pbf']
 
-# for city in cities:
-#     p.parse(city)
-#     node_multi_tag = {}
-#     # write the multi node tag to json file
-#     path, _ = city.rsplit('/', 1)
-#     output = path + '/node_multi_tag.json'
-#     with open(output, 'w+') as _file:
-#         all_node = counter.nodeDic
-#         for key in all_node:
-#             node_multi_tag[key] = {}
-#             tags, _ = all_node[key]
-#             for k in tags:
-#                 node_multi_tag[key][k] = tags[k]
-#
-#         _file.write(json.dumps(node_multi_tag))
-
-tag_without_crossing = ['traffic_signals', 'bus_stop', 'turning_circle', 'stop']
-tag_without_traffic = ['crossing', 'bus_stop', 'turning_circle', 'stop']
-
+tag_without_crossing = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'traffic_signals', 'stop', 'speed_camera', 'motorway_junction', 'mini_roundabout']
+tag_without_traffic = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'crossing', 'stop', 'speed_camera', 'motorway_junction', 'mini_roundabout']
 tag_classes = [tag_without_crossing, tag_without_traffic]
+
 for tag_class in tag_classes:
     for city in cities:
+        p.parse(city)
+        node_to_tag = {}
+        # write the multi node tag to json file
+        path, _ = city.rsplit('/', 1)
+        all_node = counter.nodeDic
+        for key in all_node:
+            node_to_tag[str(key)] = {}
+            tags, _ = all_node[key]
+            for k in tags:
+                node_to_tag[str(key)][k] = tags[k]
+
         ct, _ = city.split('/', 1)
         network_file = ct + '/network/' + ct + '.network'
-        path, _ = city.rsplit('/', 1)
-        tag_file = path + '/node_multi_tag.json'
-        with open(tag_file, 'r') as f:
-            node_to_tag = json.loads(f.readline())
-        output_file = path + '/node_with_' + tag_class[0] + '.tag'
+        output_file = path + '/node_with_' + tag_class[4] + '.tag'
         with open(output_file, 'w+') as output:
             with open(network_file, 'r') as f:
                 for line in f:

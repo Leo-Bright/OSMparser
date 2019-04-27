@@ -40,121 +40,196 @@ counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
 
-cities = ['porto/dataset/Porto.osm.pbf',
+cities = ['sanfrancisco/dataset/SanFrancisco.osm.pbf',
+          'porto/dataset/Porto.osm.pbf',
+          'tokyo/dataset/Tokyo.osm.pbf'
           ]
 
 
-for city in cities:
-    p.parse(city)
-    node_coordinate = {}
-    # write the multi node tag to json file
-    path, _ = city.rsplit('/', 1)
-    output = path + '/node_coordinate.json'
-    with open(output, 'w+') as _file:
-        all_node = counter.nodeDic
-        for key in all_node:
-            node_coordinate[str(key)] = {}
-            _, co = all_node[key]
-            node_coordinate[str(key)] = co
-        all_coord = counter.coordDic
-        for key in all_coord:
-            node_coordinate[str(key)] = all_coord[key]
-        _file.write(json.dumps(node_coordinate))
+# generate node tags file and node_coordinate file
+#
+# for city in cities:
+#     p.parse(city)
+#     node_tags = {}
+#     # write the multi node tag to json file
+#     path, _ = city.rsplit('/', 1)
+#     output_tags = path + '/node_tags.json'
+#     all_node = counter.nodeDic
+#     for key in all_node:
+#         node_tags[str(key)] = {}
+#         tags, co = all_node[key]
+#         for tag in tags:
+#             node_tags[str(key)][tag] = tags[tag]
+#     all_coord = counter.coordDic
+#     with open(output_tags, 'w+') as _file:
+#         _file.write(json.dumps(node_tags))
 
-
-def get_index_from_list(array, start, end, value, axis=0,):
-    if start == end:
-        return start
-    if start < 0:
-        return 0
-    if end > len(array):
-        return len(array)-1
-    size = end - start
-    index = size // 2 + start
-    x = array[index][1][axis]
-    if x - value < 0.00001:
-        return index
-    elif x < value:
-        return get_index_from_list(array, index + 1, end, value, axis)
+def get_index_from_list(array, start, end, lat):           #
+    mid_index = (end - start)//2 + start        #
+    if start <= end:
+        if array[mid_index][1][1] < lat:
+            return get_index_from_list(array, mid_index+1, end, lat)
+        elif array[mid_index] > lat:
+            return get_index_from_list(array, start, mid_index-1, lat)
+        else:
+            return mid_index
     else:
-        return get_index_from_list(array, start, index - 1, value, axis)
+        return end if end > 0 else start
 
 
-def get_range_from_list(array, lat, accuracy, axis=0,):
-    acc = accuracy / 110
-    start = get_index_from_list(array, 0, len(array), lat - acc, axis=axis)
-    end = get_index_from_list(array, 0, len(array), lat + acc, axis=axis)
-    return (start, end)
+def get_nodes_from_list(array, lat):
+    acc = 0.0005
+    start = get_index_from_list(array, 0, len(array), lat - acc)
+    end = get_index_from_list(array, 0, len(array), lat + acc)
+    return array[start:end]
 
 
-def get_distance(lng1,lat1,lng2,lat2):
+def get_distance(lng1, lat1, lng2, lat2):
     lng1, lat1, lng2, lat2 = map(radians, [lng1, lat1, lng2, lat2])
-    dlon=lng2-lng1
-    dlat=lat2-lat1
-    a=sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    dis=2*asin(sqrt(a))*6371*1000
+    dlon = lng2-lng1
+    dlat = lat2-lat1
+    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+    dis = 2*asin(sqrt(a))*6371*1000
     return dis
 
 
-for city in cities:
-    print city
-    ct, _ = city.split('/', 1)
-    network_file = ct + '/network/' + ct + '.network'
-    path, _ = city.rsplit('/', 1)
-    coordinate_file = path + '/node_coordinate.json'
-    with open(coordinate_file, 'r') as f:
-        node_to_coords = json.loads(f.readline())
+# generate city's lat/lon file
+#
+# for city in cities:
+#     print city
+#     ct, _ = city.split('/', 1)
+#     network_file = ct + '/network/' + ct + '.network'
+#     path, _ = city.rsplit('/', 1)
+#     coordinate_file = path + '/node_coordinate.json'
+#     with open(coordinate_file, 'r') as f:
+#         node_to_coords = json.loads(f.readline())
+#
+#     # output_file = path + '/node_with_' + tag_class[0] + '.tag'
+#     # with open(output_file, 'w+') as output:
+#
+#     node_coordinate = []
+#     node_read = set()
+#     with open(network_file, 'r') as f:
+#         for line in f:
+#             for node in line.strip().split(' '):
+#                 if node in node_read:
+#                     continue
+#                 node_read.add(node)
+#                 coordinate = node_to_coords[node]
+#                 node_coordinate.append((node, coordinate))
+#
+#     with open(path + '/node_coordinate_lat.txt', 'w+') as lat_file:
+#         for node in node_coordinate:
+#             (node_id, [node_lat, node_lon]) = node
+#             lat_file.write(node_id + ' ' + str(node_lat) + '\n')
+#
+#     with open(path + '/node_coordinate_lon.txt', 'w+') as lon_file:
+#         for node in node_coordinate:
+#             (node_id, [node_lat, node_lon]) = node
+#             lon_file.write(node_id + ' ' + str(node_lon) + '\n')
 
-    # output_file = path + '/node_with_' + tag_class[0] + '.tag'
-    # with open(output_file, 'w+') as output:
+city = cities[0]
+ct, _ = cities[0].split('/', 1)
+network_file = ct + '/network/' + ct + '.network'
+path, _ = city.rsplit('/', 1)
+coordinate_file = path + '/node_coordinate.json'
+tags_file = path + '/node_tags.json'
+node_tags_in_network = {}
 
-    node_coordinate = []
-    node_read = set()
-    with open(network_file, 'r') as f:
-        for line in f:
-            for node in line.strip().split(' '):
-                if node in node_read:
-                    continue
-                node_read.add(node)
-                coordinate = node_to_coords[node]
-                node_coordinate.append((node, coordinate))
+with open(coordinate_file, 'r') as f:
+    node_to_coords = json.loads(f.readline())
 
-    with open(path + '/node_coordinate.txt', 'w+') as coordinate_file:
-        for node in node_coordinate:
-            (node_id, [node_lat, node_lon]) = node
-            coordinate_file.write(node_id + ' ' + str(node_lat) + ' ' + str(node_lon) + '\n')
+with open(tags_file, 'r') as f:
+    node_to_tags = json.loads(f.readline())
 
-    # node_coordinate_lat = copy.copy(node_coordinate)
-    # node_coordinate_lon = copy.copy(node_coordinate)
-    # node_coordinate_lat.sort(key=lambda ele: ele[1][0])
-    # node_coordinate_lon.sort(key=lambda ele: ele[1][1])
-    #
-    # with open(path + '/node_coordinate.txt', 'w+') as coordinate_file:
-    #     for node in node_coordinate:
-    #         neighbour = set()
-    #         (node_id, [node_lat, node_lon]) = node
-    #         neighbour.add(node_id)
-    #         (lat_start, lat_end) = get_range_from_list(node_coordinate_lat, node_lat, 0.5, axis=0)
-    #         (lon_start, lon_end) = get_range_from_list(node_coordinate_lon, node_lon, 0.5, axis=1)
-    #         _neighbour_lat = node_coordinate_lat[lat_start:lat_end]
-    #         _neighbour_lon = node_coordinate_lon[lon_start:lon_end]
-    #         for no in _neighbour_lat:
-    #             if no[0] not in neighbour:
-    #                 (lat, lon) = no[1]
-    #                 dis = get_distance(lon, lat, node_lon, node_lat)
-    #                 if dis <= 0.5:
-    #                     neighbour.add(no[0])
-    #         for no in _neighbour_lon:
-    #             if no[0] not in neighbour:
-    #                 (lat, lon) = no[1]
-    #                 dis = get_distance(lon, lat, node_lon, node_lat)
-    #                 if dis <= 0.5:
-    #                     neighbour.add(no[0])
-    #         neighbour.discard(node_id)
-    #         coordinate_file.write(node_id + ' ')
-    #         for n in neighbour:
-    #             coordinate_file.write(n + ' ')
-    #         coordinate_file.write('\n')
+node_coordinate = []
+node_read = set()
+with open(network_file, 'r') as f:
+    for line in f:
+        for node in line.strip().split(' '):
+            if node in node_read: continue
+            node_tags_in_network[node] = {}
+            if node not in node_to_tags or 'highway' not in node_to_tags[node]:
+                continue
+            else:
+                node_tags_in_network[node]['highway'] = node_to_tags[node]['highway']
+
+            if node in node_read:
+                continue
+            node_read.add(node)
+            coordinate = node_to_coords[node]
+            coordinate = [float(coordinate[0]), float(coordinate[1])]
+            node_coordinate.append((node, coordinate))
+
+node_coordinate_lat = copy.copy(node_coordinate)
+node_coordinate_lat.sort(key=lambda ele: ele[1][1])
+
+mta_signals_file = path + '/MTA.signals_data.csv'
+mta_stops_file = path + '/MTA.stopsigns_data.csv'
+node_coordinate_mta_signals = []
+with open(mta_stops_file, 'r') as f:
+    first_flag = True
+    for line in f:
+        if first_flag:
+            first_flag = False
+            continue
+        point, _ = line.strip().split(',', 1)
+        _coords = point[7:-1]
+        try:
+            lon, lat = _coords.strip().split(" ")
+            lon, lat = float(lon), float(lat)
+            node_coordinate_mta_signals.append((lon, lat))
+        except:
+            continue
+
+
+for _coords in node_coordinate_mta_signals:
+    (_lon, _lat) = _coords
+    _nodes = get_nodes_from_list(node_coordinate_lat, _lat)
+    min_distance = float('inf')
+    min_node = None
+    for _node in _nodes:
+        (node_lon, node_lat) = _node[1]
+        dis = get_distance(_lon, _lat, node_lon, node_lat)
+        if dis <= min_distance:
+            min_distance = dis
+            min_node = _node[0]
+    if min_distance < 100 and 'highway' not in node_tags_in_network[min_node]:
+        print 'insert traffic signals to ', min_node
+        node_tags_in_network[min_node]['highway'] = 'stop'
+
+
+
+
+# output_file = path + '/node_with_' + tag_class[0] + '.tag'
+# with open(output_file, 'w+') as output:
+
+# generate lat/lon files
+#
+# node_coordinate = []
+# node_read = set()
+# with open(network_file, 'r') as f:
+#     for line in f:
+#         for node in line.strip().split(' '):
+#             if node in node_read:
+#                 continue
+#             node_read.add(node)
+#             coordinate = node_to_coords[node]
+#             node_coordinate.append((node, coordinate))
+#
+# with open(path + '/node_coordinate_lat.txt', 'w+') as lat_file:
+#     for node in node_coordinate:
+#         (node_id, [node_lat, node_lon]) = node
+#         lat_file.write(node_id + ' ' + str(node_lat) + '\n')
+#
+# with open(path + '/node_coordinate_lon.txt', 'w+') as lon_file:
+#     for node in node_coordinate:
+#         (node_id, [node_lat, node_lon]) = node
+#         lon_file.write(node_id + ' ' + str(node_lon) + '\n')
+
+
+
+
 
 
 
