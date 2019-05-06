@@ -32,9 +32,9 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
     print("Walking...")
     walks = graph.build_deepwalk_corpus(G, num_paths=walk_num,
                                         path_length=walk_length, alpha=0, rand=random.Random(0))
-    with open(walks_output, 'w+') as f:
-        for walk in walks:
-            f.write('%s\n' % ' 0 '.join(map(str, walk)))
+    # with open(walks_output, 'w+') as f:
+    #     for walk in walks:
+    #         f.write('%s\n' % ' 0 '.join(map(str, walk)))
 
     print("Walking done...")
 
@@ -64,9 +64,9 @@ def main(network_input="sanfrancisco/network/sf_roadnetwork",
 
 
 
-main(network_input="tokyo/network/tokyo.network",
-     intersection_input="tokyo/dataset/nodes_intersection.json",
-     walks_output="tokyo/network/tokyo_random_wn10_wl640.walks",
-     node_type_output="tokyo/dataset/node_type.txt",
-     walk_num=10, walk_length=640
+main(network_input="sanfrancisco/network/sanfrancisco.network",
+     intersection_input="sanfrancisco/dataset/nodes_intersection.json",
+     walks_output="sanfrancisco/network/tokyo_random_wn10_wl640.walks",
+     node_type_output="sanfrancisco/dataset/node_type.txt",
+     walk_num=10, walk_length=1280
      )

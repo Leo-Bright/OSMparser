@@ -41,35 +41,35 @@ class OSMCounter(object):
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('tokyo/dataset/Tokyo.osm.pbf')
+p.parse('sanfrancisco/dataset/SanFrancisco.osm.pbf')
 
 # write the intersection nodes result to file
-f_nodes_intersection_json = open(r'tokyo/dataset/nodes_intersection.json', 'w+')
-f_nodes_intersection_data2 = open(r'tokyo/dataset/nodes_intersection2.data', 'w+')
-f_nodes_intersection_data3 = open(r'tokyo/dataset/nodes_intersection3.data', 'w+')
-f_nodes_intersection_data4 = open(r'tokyo/dataset/nodes_intersection4.data', 'w+')
-f_nodes_intersection_data5 = open(r'tokyo/dataset/nodes_intersection5.data', 'w+')
+f_nodes_intersection_json = open(r'sanfrancisco/dataset/nodes_intersection.json', 'w+')
+f_nodes_intersection_data2 = open(r'sanfrancisco/dataset/nodes_intersection2.data', 'w+')
+f_nodes_intersection_data3 = open(r'sanfrancisco/dataset/nodes_intersection3.data', 'w+')
+f_nodes_intersection_data4 = open(r'sanfrancisco/dataset/nodes_intersection4.data', 'w+')
+f_nodes_intersection_data5 = open(r'sanfrancisco/dataset/nodes_intersection5.data', 'w+')
 
-node_highway_map = {}  # {node_osmid:(way_osmid, ...)}
-for osmid, (tags, refs) in counter.highwayDic.items():
+node_way_map = {}  # {node_osmid:(way_osmid, ...)}
+for osmid, (tags, refs) in counter.wayDic.items():
     for node_osmid in refs:
         if node_osmid in counter.nodeDic:
             node_info = counter.nodeDic[node_osmid]
         else:
             node_info = counter.coordDic[node_osmid]
-        if node_osmid not in node_highway_map:
-            node_highway_map[node_osmid] = (node_info, [osmid,])
+        if node_osmid not in node_way_map:
+            node_way_map[node_osmid] = (node_info, [osmid, ])
         else:
-            node_highway_map[node_osmid][1].append(osmid)
+            node_way_map[node_osmid][1].append(osmid)
 
 intersection_nodes = {} # {2:{osmid_node:(node_info,[osmid_way,...])},3:{},4{}}
-for osmid, (node_info, ways_list) in node_highway_map.items():
+for osmid, (node_info, ways_list) in node_way_map.items():
     # f_nodes_statistic.write(item.__str__() + '\n')
-    intersect_num = len(ways_list)
+    intersect_num = len(set(ways_list))
     if 1 < intersect_num:
         if intersect_num not in intersection_nodes:
             intersection_nodes[intersect_num] = {}
-        intersection_nodes[intersect_num][osmid] = (node_info, ways_list)
+        intersection_nodes[intersect_num][osmid] = node_info
 for key, value in intersection_nodes.items():
     print(str(key)+" : " + str(len(value.keys())))
 for item in intersection_nodes[2].items():
@@ -90,8 +90,8 @@ f_nodes_intersection_json.close()
 
 
 # write the crossing nodes result to file
-f_nodes_crossing_json = open(r'tokyo/dataset/nodes_crossing.json', 'w+')
-f_nodes_crossing_data = open(r'tokyo/dataset/nodes_crossing.data', 'w+')
+f_nodes_crossing_json = open(r'sanfrancisco/dataset/nodes_crossing.json', 'w+')
+f_nodes_crossing_data = open(r'sanfrancisco/dataset/nodes_crossing.data', 'w+')
 
 f_nodes_crossing_json.write(json.dumps(counter.crossing_nodes))
 f_nodes_crossing_json.close()
