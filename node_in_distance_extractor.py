@@ -26,8 +26,8 @@ class OSMCounter(object):
 
     def coords(self, coords):
         # callback method for coords
-        for osmid, lat, lon in coords:
-            self.coordDic[osmid] = (lat, lon)
+        for osmid, lon, lat in coords:
+            self.coordDic[osmid] = (lon, lat)
 
     def relations(self, relations):
         # callback method for relations
@@ -92,15 +92,18 @@ def get_distance(lng1, lat1, lng2, lat2):
 def generate_city_coordinate_file(cities):
     for city in cities:
         print city
+        p.parse(city)
         ct, _ = city.split('/', 1)
         network_file = ct + '/network/' + ct + '.network'
         path, _ = city.rsplit('/', 1)
+        node_to_coords = {}
+        for osm_id in counter.nodeDic:
+            node_to_coords[str(osm_id)] = counter.nodeDic[osm_id][1]
+        for osm_id in counter.coordDic:
+            node_to_coords[str(osm_id)] = counter.coordDic[osm_id]
         coordinate_file = path + '/node_coordinate.json'
-        with open(coordinate_file, 'r') as f:
-            node_to_coords = json.loads(f.readline())
-
-        # output_file = path + '/node_with_' + tag_class[0] + '.tag'
-        # with open(output_file, 'w+') as output:
+        with open(coordinate_file, 'w+') as f:
+            f.write(json.dumps(node_to_coords))
 
         node_coordinate = []
         node_read = set()
@@ -215,6 +218,29 @@ def statistics(city, node_to_tags, tag):
     return stat_count
 
 
+def statistics_distance(cities):
+    for city in cities:
+        print("start statistic for ", city)
+        roadsegment = 0
+        total_dis = 0
+        ct, _ = city.split('/', 1)
+        path, _ = city.rsplit('/', 1)
+        network_file = ct + '/network/' + ct + '.network'
+        coordinate_file = path + '/node_coordinate.json'
+        with open(coordinate_file, 'r') as f:
+            node_to_coords = json.loads(f.readline())
+        with open(network_file, 'r') as f:
+            for line in f:
+                roadsegment += 1
+                node1, node2 = line.strip().split(' ')
+                _lon1, _lat1 = node_to_coords[node1]
+                _lon2, _lat2 = node_to_coords[node2]
+                dis = get_distance(_lon1, _lat1, _lon2, _lat2)
+                total_dis += dis
+
+        print("average distance is ", total_dis/roadsegment)
+
+
 def run(city, node_to_tags_in_network):
 
     tag_without_crossing = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'traffic_signals', 'stop',
@@ -255,13 +281,15 @@ if __name__ == '__main__':
               'tokyo/dataset/Tokyo.osm.pbf'
               ]
 
-    node_to_tags = generate_node_tags_file(cities[0])
+    # node_to_tags = generate_node_tags_file(cities[0])
 
     # generate_city_coordinate_file(cities)
 
-    node_to_tags_in_network = gen_node_to_tags_in_network(cities[0], node_to_tags, mta_stops_file)
+    # node_to_tags_in_network = gen_node_to_tags_in_network(cities[0], node_to_tags, mta_stops_file)
 
-    run(cities[0], node_to_tags_in_network)
+    # run(cities[0], node_to_tags_in_network)
 
     # print statistics(cities[0], node_to_tags, 'traffic_signals')
+
+    statistics_distance(cities)
 
