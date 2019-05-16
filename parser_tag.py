@@ -83,22 +83,62 @@ p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.
               coords_callback=counter.coords, relations_callback=counter.relations)
 p.parse('sanfrancisco/dataset/SanFrancisco.osm.pbf')
 
+
 # write the way's tag to file
-f_ways_tags = open(r'sanfrancisco/tag/ways.tag', 'w+')
-counter.count_tags(f_ways_tags, type='way', output='formal', order=True)
-f_ways_tags.close()
+def extract_way_tag_info(output):
+    f_ways_tags = open(r'sanfrancisco/tag/ways.tag', 'w+')
+    counter.count_tags(f_ways_tags, type='way', output='formal', order=True)
+    f_ways_tags.close()
+
 
 # write the highway's tag to file
-f_highway_tags = open(r'sanfrancisco/tag/highway.tag', 'w+')
-counter.count_tags(f_highway_tags, type='highway', output='formal', order=True)
-f_highway_tags.close()
+def extract_highway_tag_info():
+    f_highway_tags = open(r'sanfrancisco/tag/highway.tag', 'w+')
+    counter.count_tags(f_highway_tags, type='highway', output='formal', order=True)
+    f_highway_tags.close()
+
 
 # write the node's tag to file
-f_nodes_tags = open(r'sanfrancisco/tag/nodes.tag', 'w+')
-counter.count_tags(f_nodes_tags, type='node', output='formal', order=True)
-f_nodes_tags.close()
+def extract_node_tag_info():
+    f_nodes_tags = open(r'sanfrancisco/tag/nodes.tag', 'w+')
+    counter.count_tags(f_nodes_tags, type='node', output='formal', order=True)
+    f_nodes_tags.close()
+
 
 # write the selected_node's tag to file
-f_selected_nodes_tag = open(r'sanfrancisco/tag/selected_nodes_onlyNode.tag', 'w+')
-counter.count_tags(f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'sanfrancisco/network/selected_nodes_onlyNode.json')
-f_selected_nodes_tag.close()
+def extract_network_node_tag_info():
+    f_selected_nodes_tag = open(r'sanfrancisco/tag/selected_nodes_onlyNode.tag', 'w+')
+    counter.count_tags(f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'sanfrancisco/network/selected_nodes_onlyNode.json')
+    f_selected_nodes_tag.close()
+
+
+def extract_road_segment_tag_info(road_segments_file, output):
+    way_count = {}
+    with open(road_segments_file) as f:
+        road_segments = json.loads(f.readline())
+    for segment in road_segments:
+        osm_id = segment['osm_id']
+        if osm_id not in way_count:
+            way_count[osm_id] = 1
+        else:
+            way_count[osm_id] += 1
+
+    tags_dict = {}
+    with open(output, 'w+') as f:
+        for osmid, tags_and_others in counter.wayDic.items():
+            tags = tags_and_others[0]
+            coefficient = way_count[osmid]
+            for k, v in tags.items():
+                if k not in tags_dict:
+                    tags_dict[k] = {}
+                if v not in tags_dict[k]:
+                    tags_dict[k][v] = coefficient
+                else:
+                    tags_dict[k][v] += coefficient
+
+
+if __name__ == '__main__':
+    # extract_way_tag_info(output='sanfrancisco/tag/ways.tag')
+    extract_road_segment_tag_info(road_segments_file='sanfrancisco/dataset/all_road_segments_dict.sanfrancisco',
+                                  output='sanfrancisco/tag/road_segment.tag')
+
