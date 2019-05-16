@@ -157,8 +157,44 @@ def extract_road_segment_tag_info(road_segments_file, output):
                 f.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
 
 
+def statistical_road_segment_class_id(road_segments_file):
+    class_count = {}
+    with open(road_segments_file) as f:
+        road_segments = json.loads(f.readline())
+    print('this city has segments num: ', len(road_segments.keys()))
+    for segment in road_segments:
+        class_id = road_segments[segment]['class_id']
+        if class_id not in class_count:
+            class_count[class_id] = 1
+        else:
+            class_count[class_id] += 1
+
+    class_count_list = []
+    for key, value in class_count.items():
+        class_count_list.append((key, value))
+
+    class_count_list.sort(key=lambda x: x[-1], reverse=True)
+
+    with open('dataset/road-types.json') as f:
+        road_types = json.load(f)
+
+    road_type_info = {}
+    for road_type in road_types['tags'][0]['values']:
+        type_name = road_type['name']
+        type_id = road_type['id']
+        road_type_info[type_id] = type_name
+
+    for key, value in class_count_list:
+        type_name = road_type_info[key]
+        print(str(key) + '\t' + type_name + '\t' + str(value))
+
+
 if __name__ == '__main__':
+
     # extract_way_tag_info(output='sanfrancisco/tag/ways.tag')
-    extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
-                                  output='porto/tag/road_segment_tag_info.porto')
+
+    # extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
+    #                               output='porto/tag/road_segment_tag_info.porto')
+
+    statistical_road_segment_class_id(road_segments_file='porto/dataset/all_road_segments_dict.porto')
 
