@@ -81,7 +81,7 @@ class OSMCounter(object):
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('sanfrancisco/dataset/SanFrancisco.osm.pbf')
+p.parse('porto/dataset/Porto.osm.pbf')
 
 
 # write the way's tag to file
@@ -117,7 +117,7 @@ def extract_road_segment_tag_info(road_segments_file, output):
     with open(road_segments_file) as f:
         road_segments = json.loads(f.readline())
     for segment in road_segments:
-        osm_id = segment['osm_id']
+        osm_id = str(road_segments[segment]['osm_id'])
         if osm_id not in way_count:
             way_count[osm_id] = 1
         else:
@@ -125,9 +125,12 @@ def extract_road_segment_tag_info(road_segments_file, output):
 
     tags_dict = {}
     with open(output, 'w+') as f:
-        for osmid, tags_and_others in counter.wayDic.items():
+        for osmid, tags_and_others in counter.highwayDic.items():
             tags = tags_and_others[0]
-            coefficient = way_count[osmid]
+            if str(osmid) in way_count:
+                coefficient = way_count[str(osmid)]
+            else:
+                continue
             for k, v in tags.items():
                 if k not in tags_dict:
                     tags_dict[k] = {}
@@ -136,9 +139,26 @@ def extract_road_segment_tag_info(road_segments_file, output):
                 else:
                     tags_dict[k][v] += coefficient
 
+        tags_count_list = []
+        for key, value_count in tags_dict.items():
+            for value, count in value_count.items():
+                tags_count_list.append((key, value, count))
+
+        tags_count_list.sort(key=lambda x: x[-1], reverse=True)
+
+        for key, value, count in tags_count_list:
+            try:
+                f.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
+            except:
+                if not isinstance(key, int):
+                    key = key.encode('utf8')
+                if not isinstance(value, int):
+                    value = value.encode('utf8')
+                f.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
+
 
 if __name__ == '__main__':
     # extract_way_tag_info(output='sanfrancisco/tag/ways.tag')
-    extract_road_segment_tag_info(road_segments_file='sanfrancisco/dataset/all_road_segments_dict.sanfrancisco',
-                                  output='sanfrancisco/tag/road_segment.tag')
+    extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
+                                  output='porto/tag/road_segment_tag_info.porto')
 
