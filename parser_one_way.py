@@ -19,14 +19,13 @@ def extract(road_segments_file, one_way_json, segment_type_json):
         f.write(json.dumps(one_way))
 
     with open(segment_type_json, 'w+') as f:
-        f.write(json.dumps(segment_type))
-
-
+        for gid in segment_type:
+            f.write(gid + ' ' + str(segment_type[gid]) + '\n')
 
 
 if __name__ == '__main__':
 
-    extract(road_segments_file='tokyo/dataset/all_road_segments_dict.tokyo',
-            one_way_json='tokyo/dataset/tokyo_segments_one_way_.json',
-            segment_type_json='tokyo/dataset/tokyo_segment_type.json'
+    extract(road_segments_file='sanfrancisco/dataset/all_road_segments_dict.sanfrancisco',
+            one_way_json='sanfrancisco/dataset/sanfrancisco_segments_one_way.json',
+            segment_type_json='sanfrancisco/dataset/segment_type.sanfrancisco'
             )
