@@ -198,6 +198,15 @@ def statistical_road_segment_class_id(road_segments_file):
         print(str(key) + '\t' + type_name + '\t' + str(value))
 
 
+def extract_highway_tag_file(output):
+    with open(output, 'w+') as f:
+        result = {}
+        for osmid, tags_and_others in counter.highwayDic.items():
+            tags = tags_and_others[0]
+            result[osmid] = tags
+        f.write(json.dumps(result))
+
+
 if __name__ == '__main__':
 
     # extract_way_tag_info(output='sanfrancisco/tag/ways.tag')
@@ -205,6 +214,8 @@ if __name__ == '__main__':
     extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
                                   output='porto/tag/road_segment_tag_info.porto',
                                   key='tiger:name_base',)
+
+    extract_highway_tag_file(output='sanfrancisco/tag/road_segment_tag.json')
 
     # statistical_road_segment_class_id(road_segments_file='porto/dataset/all_road_segments_dict.porto')
 
