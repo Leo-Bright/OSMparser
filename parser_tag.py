@@ -124,6 +124,7 @@ def extract_road_segment_tag_info(road_segments_file, output, key=None):
             way_count[osm_id] += 1
 
     tags_dict = {}
+    tags_dict[key] = {}
     with open(output, 'w+') as f:
         for osmid, tags_and_others in counter.highwayDic.items():
             tags = tags_and_others[0]
@@ -215,7 +216,7 @@ if __name__ == '__main__':
                                   output='porto/tag/road_segment_tag_info.porto',
                                   key='tiger:name_base',)
 
-    extract_highway_tag_file(output='sanfrancisco/tag/road_segment_tag.json')
+    # extract_highway_tag_file(output='sanfrancisco/tag/road_segment_tag.json')
 
     # statistical_road_segment_class_id(road_segments_file='porto/dataset/all_road_segments_dict.porto')
 
