@@ -112,7 +112,7 @@ def extract_network_node_tag_info():
     f_selected_nodes_tag.close()
 
 
-def extract_road_segment_tag_info(road_segments_file, output):
+def extract_road_segment_tag_info(road_segments_file, output, key=None):
     way_count = {}
     with open(road_segments_file) as f:
         road_segments = json.loads(f.readline())
@@ -131,13 +131,22 @@ def extract_road_segment_tag_info(road_segments_file, output):
                 coefficient = way_count[str(osmid)]
             else:
                 continue
-            for k, v in tags.items():
-                if k not in tags_dict:
-                    tags_dict[k] = {}
-                if v not in tags_dict[k]:
-                    tags_dict[k][v] = coefficient
+            if key is None:
+                for k, v in tags.items():
+                    if k not in tags_dict:
+                        tags_dict[k] = {}
+                    if v not in tags_dict[k]:
+                        tags_dict[k][v] = coefficient
+                    else:
+                        tags_dict[k][v] += coefficient
+            elif key not in tags:
+                continue
+            else:
+                v = tags[key]
+                if v not in tags_dict[key]:
+                    tags_dict[key][v] = coefficient
                 else:
-                    tags_dict[k][v] += coefficient
+                    tags_dict[key][v] += coefficient
 
         tags_count_list = []
         for key, value_count in tags_dict.items():
@@ -193,8 +202,9 @@ if __name__ == '__main__':
 
     # extract_way_tag_info(output='sanfrancisco/tag/ways.tag')
 
-    # extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
-    #                               output='porto/tag/road_segment_tag_info.porto')
+    extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
+                                  output='porto/tag/road_segment_tag_info.porto',
+                                  key='tiger:name_base',)
 
-    statistical_road_segment_class_id(road_segments_file='porto/dataset/all_road_segments_dict.porto')
+    # statistical_road_segment_class_id(road_segments_file='porto/dataset/all_road_segments_dict.porto')
 
