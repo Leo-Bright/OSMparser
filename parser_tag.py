@@ -81,7 +81,7 @@ class OSMCounter(object):
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('porto/dataset/Porto.osm.pbf')
+p.parse('chicago/dataset/Chicago.osm.pbf')
 
 
 # write the way's tag to file
@@ -212,11 +212,11 @@ if __name__ == '__main__':
 
     # extract_way_tag_info(output='sanfrancisco/tag/ways.tag')
 
-    extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
-                                  output='porto/tag/road_segment_tag_info.porto',
-                                  key='tiger:name_base',)
+    # extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
+    #                               output='porto/tag/road_segment_tag_info.porto',
+    #                               key='tiger:name_base',)
 
-    # extract_highway_tag_file(output='sanfrancisco/tag/road_segment_tag.json')
+    extract_highway_tag_file(output='chicago/tag/chicago_road_segment_tag.json')
 
     # statistical_road_segment_class_id(road_segments_file='porto/dataset/all_road_segments_dict.porto')
 
