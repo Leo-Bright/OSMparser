@@ -127,6 +127,7 @@ def generate_city_coordinate_file(cities):
                 lon_file.write(node_id + ' ' + str(node_lon) + '\n')
 
 
+# supplement stop_tag for network highway node
 def gen_node_to_tags_in_network(city, node_to_tags, mta_file):
     ct, _ = city.split('/', 1)
     network_file = ct + '/network/' + ct + '.network'
@@ -218,7 +219,7 @@ def statistics(city, node_to_tags, tag):
     return stat_count
 
 
-def statistics_distance(cities):
+def statistics_avg_distance(cities):
     for city in cities:
         print("start statistic for ", city)
         roadsegment = 0
@@ -241,7 +242,7 @@ def statistics_distance(cities):
         print("average distance is ", total_dis/roadsegment)
 
 
-def run(city, node_to_tags_in_network):
+def gen_increament_tag_file(city, node_to_tags_in_network):
 
     tag_without_crossing = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'traffic_signals', 'stop',
                             'speed_camera', 'motorway_junction', 'mini_roundabout']
@@ -287,9 +288,9 @@ if __name__ == '__main__':
 
     # node_to_tags_in_network = gen_node_to_tags_in_network(cities[0], node_to_tags, mta_stops_file)
 
-    # run(cities[0], node_to_tags_in_network)
+    # gen_increament_tag_file(cities[0], node_to_tags_in_network)
 
     # print statistics(cities[0], node_to_tags, 'traffic_signals')
 
-    statistics_distance(cities)
+    statistics_avg_distance(cities)
 
