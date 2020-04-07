@@ -1,5 +1,4 @@
-from imposm.parser import OSMParser
-from parser import OSMCounter
+import parser
 from math import radians, cos, sin, asin, sqrt
 import json, copy, pickle as pkl
 
@@ -85,13 +84,13 @@ def gen_city_coordinate_json(cities_path, parsed_obj_path):
 
         node_coordinate = []
         node_read = set()
-        with open(network_file, 'r') as f:
+        with open(network_file) as f:
             for line in f:
                 for node in line.strip().split(' '):
                     if node in node_read:
                         continue
                     node_read.add(node)
-                    coordinate = node2coords[node]
+                    coordinate = node2coords[str(node)]
                     node_coordinate.append((node, coordinate))
 
         with open(path + '/node_coordinate_lat.txt', 'w+') as lat_file:
