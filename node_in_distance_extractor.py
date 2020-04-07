@@ -1,4 +1,5 @@
 from imposm.parser import OSMParser
+from parser import OSMCounter
 from math import radians, cos, sin, asin, sqrt
 import json, copy, pickle as pkl
 
