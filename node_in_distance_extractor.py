@@ -1,54 +1,28 @@
 from imposm.parser import OSMParser
 from math import radians, cos, sin, asin, sqrt
-import json
-import copy
+import json, copy, pickle as pkl
 
 
-# simple class that handles the parsed OSM data.
-class OSMCounter(object):
-    relationDic = {} #{osmid:(tag, refs)}
-    coordDic = {} #{osmid:(lat, lon)}
-    nodeDic = {} #{osmid:(tag, coordinary)}
-    highwayDic = {} #{osmid:(tag, refs)}
-    wayDic = {} #{osmid:(tag, refs)}
-
-    def ways(self, ways):
-        # callback method for ways
-        for osmid, tags, refs in ways:
-            if 'highway' in tags:
-                self.highwayDic[osmid] = (tags, refs)
-            self.wayDic[osmid] = (tags, refs)
-
-    def nodes(self, nodes):
-        # callback method for nodes
-        for osmid, tags, coordinary in nodes:
-            self.nodeDic[osmid] = (tags, coordinary)
-
-    def coords(self, coords):
-        # callback method for coords
-        for osmid, lon, lat in coords:
-            self.coordDic[osmid] = (lon, lat)
-
-    def relations(self, relations):
-        # callback method for relations
-        for osmid, tags, refs in relations:
-            self.relationDic[osmid] = (tags, refs)
+def get_parent_dir(path):
+    parent_dir, _ = path.split('/', 1)
+    return parent_dir
 
 
-counter = OSMCounter()
-# instantiate counter and parser and start parsing Proto ways
-p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
-              coords_callback=counter.coords, relations_callback=counter.relations)
+def get_up_layer_path(path):
+    path, _ = path.rsplit('/', 1)
+    return path
 
 
-def generate_node_tags_file(city):
+def generate_node_tags_file(city_path, parsed_obj_path):
 
-    p.parse(city)
+    with open(parsed_obj_path, 'rb') as f:
+        parsed_obj = pkl.load(f)
     node_tags = {}
+
     # write the multi node tag to json file
-    path, _ = city.rsplit('/', 1)
+    path, _ = get_up_layer_path(city_path)
     output_tags = path + '/node_tags.json'
-    all_node = counter.nodeDic
+    all_node = parsed_obj.nodeDic
     for key in all_node:
         node_tags[str(key)] = {}
         tags, co = all_node[key]
@@ -59,8 +33,8 @@ def generate_node_tags_file(city):
     return node_tags
 
 
-def get_index_from_list(array, start, end, lat):           #
-    mid_index = (end - start)//2 + start        #
+def get_index_from_list(array, start, end, lat):
+    mid_index = (end - start)//2 + start
     if start <= end:
         if array[mid_index][1][1] < lat:
             return get_index_from_list(array, mid_index+1, end, lat)
@@ -89,21 +63,24 @@ def get_distance(lng1, lat1, lng2, lat2):
 
 
 # generate city's lat/lon file
-def generate_city_coordinate_file(cities):
-    for city in cities:
-        print city
-        p.parse(city)
-        ct, _ = city.split('/', 1)
+def gen_city_coordinate_json(cities_path, parsed_obj_path):
+
+    for city_path in cities_path:
+        print 'generate city coordinate json file: ' + city_path
+        with open(parsed_obj_path, 'rb') as f:
+            parsed_obj = pkl.load(f)
+        ct = get_parent_dir(city_path)
         network_file = ct + '/network/' + ct + '.network'
-        path, _ = city.rsplit('/', 1)
-        node_to_coords = {}
-        for osm_id in counter.nodeDic:
-            node_to_coords[str(osm_id)] = counter.nodeDic[osm_id][1]
-        for osm_id in counter.coordDic:
-            node_to_coords[str(osm_id)] = counter.coordDic[osm_id]
+        path = get_up_layer_path(city_path)
+
+        node2coords = {}
+        for osm_id in parsed_obj.nodeDic:
+            node2coords[str(osm_id)] = parsed_obj.nodeDic[osm_id][1]
+        for osm_id in parsed_obj.coordDic:
+            node2coords[str(osm_id)] = parsed_obj.coordDic[osm_id]
         coordinate_file = path + '/node_coordinate.json'
         with open(coordinate_file, 'w+') as f:
-            f.write(json.dumps(node_to_coords))
+            f.write(json.dumps(node2coords))
 
         node_coordinate = []
         node_read = set()
@@ -113,7 +90,7 @@ def generate_city_coordinate_file(cities):
                     if node in node_read:
                         continue
                     node_read.add(node)
-                    coordinate = node_to_coords[node]
+                    coordinate = node2coords[node]
                     node_coordinate.append((node, coordinate))
 
         with open(path + '/node_coordinate_lat.txt', 'w+') as lat_file:
@@ -128,10 +105,10 @@ def generate_city_coordinate_file(cities):
 
 
 # supplement stop_tag for network highway node
-def gen_node_to_tags_in_network(city, node_to_tags, mta_file):
-    ct, _ = city.split('/', 1)
+def gen_node_to_tags_in_network(city_path, node_to_tags, mta_file):
+    ct = get_parent_dir(city_path)
     network_file = ct + '/network/' + ct + '.network'
-    path, _ = city.rsplit('/', 1)
+    path = get_up_layer_path(city_path)
     coordinate_file = path + '/node_coordinate.json'
     node_tags_in_network = {}
 
@@ -202,9 +179,9 @@ def gen_node_to_tags_in_network(city, node_to_tags, mta_file):
     return node_tags_in_network
 
 
-def statistics(city, node_to_tags, tag):
+def statistics(city_path, node_to_tags, tag):
     stat_count = 0
-    ct, _ = city.split('/', 1)
+    ct = get_parent_dir(city_path)
     network_file = ct + '/network/' + ct + '.network'
     with open(network_file, 'r') as f:
         for line in f:
@@ -219,13 +196,13 @@ def statistics(city, node_to_tags, tag):
     return stat_count
 
 
-def statistics_avg_distance(cities):
-    for city in cities:
-        print("start statistic for ", city)
+def statistics_avg_distance(cities_path):
+    for city_path in cities_path:
+        print("start statistic for ", city_path)
         roadsegment = 0
         total_dis = 0
-        ct, _ = city.split('/', 1)
-        path, _ = city.rsplit('/', 1)
+        ct = get_parent_dir(city_path)
+        path = get_up_layer_path(city_path)
         network_file = ct + '/network/' + ct + '.network'
         coordinate_file = path + '/node_coordinate.json'
         with open(coordinate_file, 'r') as f:
@@ -252,8 +229,8 @@ def gen_increament_tag_file(city, node_to_tags_in_network):
 
     for tag_class in tag_classes:
         # write the multi node tag to json file
-        path, _ = city.rsplit('/', 1)
-        ct, _ = city.split('/', 1)
+        path = get_up_layer_path(city)
+        ct = get_parent_dir(city)
         network_file = ct + '/network/' + ct + '.network'
         output_file = path + '/node_with_' + tag_class[4] + '_increament_stop.tag'
         with open(output_file, 'w+') as output:
@@ -274,17 +251,20 @@ def gen_increament_tag_file(city, node_to_tags_in_network):
 
 if __name__ == '__main__':
 
+    phil_parsed_obj_pkl = 'philadelphia/dataset/philadelphia_parsed_obj.pkl'
+
     mta_signals_file = 'sanfrancisco/dataset/MTA.signals_data.csv'
     mta_stops_file = 'sanfrancisco/dataset/MTA.stopsigns_data.csv'
 
-    cities = ['sanfrancisco/dataset/SanFrancisco.osm.pbf',
+    cities_path = ['sanfrancisco/dataset/SanFrancisco.osm.pbf',
               'porto/dataset/Porto.osm.pbf',
-              'tokyo/dataset/Tokyo.osm.pbf'
+              'tokyo/dataset/Tokyo.osm.pbf',
+              'philadelphia/dataset/Philadelphia.osm-2.pbf'
               ]
 
     # node_to_tags = generate_node_tags_file(cities[0])
 
-    # generate_city_coordinate_file(cities)
+    gen_city_coordinate_json(cities_path[3:], phil_parsed_obj_pkl)
 
     # node_to_tags_in_network = gen_node_to_tags_in_network(cities[0], node_to_tags, mta_stops_file)
 
@@ -292,5 +272,5 @@ if __name__ == '__main__':
 
     # print statistics(cities[0], node_to_tags, 'traffic_signals')
 
-    statistics_avg_distance(cities)
+    # statistics_avg_distance(cities)
 

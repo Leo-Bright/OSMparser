@@ -1,44 +1,5 @@
-from imposm.parser import OSMParser
 from math import radians, cos, sin, asin, sqrt
-import json
-import copy
-
-
-# simple class that handles the parsed OSM data.
-class OSMCounter(object):
-    relationDic = {} #{osmid:(tag, refs)}
-    coordDic = {} #{osmid:(lat, lon)}
-    nodeDic = {} #{osmid:(tag, coordinary)}
-    highwayDic = {} #{osmid:(tag, refs)}
-    wayDic = {} #{osmid:(tag, refs)}
-
-    def ways(self, ways):
-        # callback method for ways
-        for osmid, tags, refs in ways:
-            if 'highway' in tags:
-                self.highwayDic[osmid] = (tags, refs)
-            self.wayDic[osmid] = (tags, refs)
-
-    def nodes(self, nodes):
-        # callback method for nodes
-        for osmid, tags, coordinary in nodes:
-            self.nodeDic[osmid] = (tags, coordinary)
-
-    def coords(self, coords):
-        # callback method for coords
-        for osmid, lon, lat in coords:
-            self.coordDic[osmid] = (lon, lat)
-
-    def relations(self, relations):
-        # callback method for relations
-        for osmid, tags, refs in relations:
-            self.relationDic[osmid] = (tags, refs)
-
-
-counter = OSMCounter()
-# instantiate counter and parser and start parsing Proto ways
-p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
-              coords_callback=counter.coords, relations_callback=counter.relations)
+import json, copy, pickle
 
 
 def generate_node_tags_file(city):
@@ -274,12 +235,10 @@ def gen_increament_tag_file(city, node_to_tags_in_network):
 
 if __name__ == '__main__':
 
-    mta_signals_file = 'sanfrancisco/dataset/MTA.signals_data.csv'
+    phil_parsed_obj_pkl = 'philadelphia/dataset/philadelphia_parsed_obj.pkl'
     mta_stops_file = 'sanfrancisco/dataset/MTA.stopsigns_data.csv'
 
-    cities = ['sanfrancisco/dataset/SanFrancisco.osm.pbf',
-              'porto/dataset/Porto.osm.pbf',
-              'tokyo/dataset/Tokyo.osm.pbf'
+    cities = ['philadelphia/dataset/Philadelphia.osm-2.pbf',
               ]
 
     # node_to_tags = generate_node_tags_file(cities[0])
