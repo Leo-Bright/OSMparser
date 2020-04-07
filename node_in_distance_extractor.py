@@ -3,6 +3,16 @@ from math import radians, cos, sin, asin, sqrt
 import json, copy, pickle as pkl
 
 
+# simple class that handles the parsed OSM data.
+class OSMCounter(object):
+    relationDic = {} #{osmid:(tag, refs)}
+    coordDic = {} #{osmid:(lat, lon)}
+    crossing_nodes = {} #{osmid:(tag, coordinary)}
+    nodeDic = {} #{osmid:(tag, coordinary)}
+    highwayDic = {}  # {osmid:(tag, refs)}
+    wayDic = {} #{osmid:(tag, refs)}
+
+
 def get_parent_dir(path):
     parent_dir, _ = path.split('/', 1)
     return parent_dir

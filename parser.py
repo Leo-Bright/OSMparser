@@ -37,19 +37,11 @@ class OSMCounter(object):
             self.relationDic[osmid] = (tags, refs)
 
 
-if __name__ == '__main__':
+# instantiate counter and parser and start parsing Proto ways
+counter = OSMCounter()
+p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
+              coords_callback=counter.coords, relations_callback=counter.relations)
+p.parse('philadelphia/dataset/Philadelphia.osm-2.pbf')
 
-    # instantiate counter and parser and start parsing Proto ways
-    counter = OSMCounter()
-    p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
-                  coords_callback=counter.coords, relations_callback=counter.relations)
-    p.parse('philadelphia/dataset/Philadelphia.osm-2.pbf')
-
-    with open('philadelphia/dataset/philadelphia_parsed_obj.pkl', 'wb') as f:
-        pkl.dump(counter, f)
-
-    with open('philadelphia/dataset/philadelphia_parsed_obj.pkl', 'rb') as f:
-        counter1 = pkl.load(f)
-        for key in counter1.relationDic:
-            print key
-            break
+with open('philadelphia/dataset/philadelphia_parsed_obj.pkl', 'wb') as f:
+    pkl.dump(counter, f)
