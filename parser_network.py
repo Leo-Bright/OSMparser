@@ -73,15 +73,15 @@ class OSMCounter(object):
 # instantiate counter and parser and start parsing Proto ways
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes, coords_callback=counter.coords)
-p.parse('sanfrancisco/dataset/SanFrancisco.osm.pbf')
+p.parse('philadelphia/dataset/Philadelphia.osm-2.pbf')
 
 
 # highways road network with all nodes
-f_highway_network = open(r'sanfrancisco/network/highway_onlyNode.network', 'w+')
-counter.print_ways_result(f_highway_network, allNodes=True, onlyNode=True, forLINE=False)
+f_highway_network = open(r'philadelphia/network/highway_onlyNode.network', 'w+')
+counter.print_ways_result(f_highway_network, allNodes=False, onlyNode=True, forLINE=False)
 f_highway_network.close()
 
 # selected nodes in the network
-f_selected_nodes = open(r'sanfrancisco/network/selected_nodes_onlyNode.json', 'w+')
+f_selected_nodes = open(r'philadelphia/network/selected_nodes_onlyNode.json', 'w+')
 f_selected_nodes.write(json.dumps(counter.selected_node_dic))
 f_selected_nodes.close()
