@@ -34,11 +34,6 @@ def print_osm_network(osm_parsed_obj, output_file_path, allNodes=False, onlyNode
                 else:
                     output_file.write(str(nodes[node_index]) + ' ' + str(nodes[node_index+1]) + '\n')
 
-            #add choice nodes to dic:
-            for node in nodes:
-                if node in osm_parsed_obj.nodeDic:
-                    osm_parsed_obj.selected_node_dic[node] = osm_parsed_obj.nodeDic[node]
-
 
 def print_osm_tag(osm_parsed_obj, output_file_path, osmid=False):
 
