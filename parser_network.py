@@ -2,11 +2,16 @@ import parser
 import pickle as pkl
 
 
-def print_osm_network(osm_parsed_obj, output_file_path, allNodes=False, onlyNode=False, forLINE=False):
+def print_osm_network(osm_parsed_obj, output_file_path, highway=True, allNodes=False, onlyNode=False, forLINE=False):
 
     with open(output_file_path, 'w+') as output_file:
 
-        for item in osm_parsed_obj.highwayDic.items():
+        if highway:
+            target_way = osm_parsed_obj.highwayDic.items()
+        else:
+            target_way = osm_parsed_obj.wayDic.items()
+
+        for item in target_way:
             refs = item[1][-1]
 
             # filter the way that don't match the condition
@@ -50,5 +55,5 @@ with open('philadelphia/dataset/philadelphia_parsed_obj.pkl', 'rb') as f:
     parsed_obj = pkl.load(f)
 
 # highways road network with all nodes
-highway_network_path = 'philadelphia/network/philadelphia_allNodes.network'
-print_osm_network(parsed_obj, highway_network_path, allNodes=True, onlyNode=False, forLINE=False)
+highway_network_path = 'philadelphia/network/philadelphia_allWays_allNodes.network'
+print_osm_network(parsed_obj, highway_network_path, highway=False, allNodes=True, onlyNode=False, forLINE=False)

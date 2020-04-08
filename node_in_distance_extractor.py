@@ -250,7 +250,7 @@ def gen_increament_tag_file(city, node_to_tags_in_network):
 
 
 # comput overlap node in network from crash file
-def compute_overlap_crash_node(city_path, crash_file_path):
+def compute_overlap_crash_node(city_path, crash_file_path, allNodes=False):
 
     crash_coordinates = []
     with open(crash_file_path) as f:
@@ -271,7 +271,10 @@ def compute_overlap_crash_node(city_path, crash_file_path):
             crash_coordinates.append((lon, lat))
 
     ct = get_parent_dir(city_path)
-    network_file = ct + '/network/' + ct + '.network'
+    if allNodes:
+        network_file = ct + '/network/' + ct + '_allNodes.network'
+    else:
+        network_file = ct + '/network/' + ct + '.network'
     path = get_up_layer_path(city_path)
     coordinate_file = path + '/node_coordinate.json'
 
@@ -341,7 +344,7 @@ if __name__ == '__main__':
 
     # supplemeted_node2tags = supp_node2tags_in_network(cities_path[0], node2tags, mta_stops_file)
 
-    compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv')
+    compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', allNodes=False)
 
     # gen_increament_tag_file(cities_path[0], supplemeted_node2tags)
 
