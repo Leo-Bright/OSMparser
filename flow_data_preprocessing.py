@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     # output_station_lat_lon(stations_file_path, lat_lon_file_path)
 
-    search_coordinate = [86.14363913, -98.03430435]
+    search_coordinate = [36.80776731, -85.46235191]
     search_lat = search_coordinate[0]
     search_lon = search_coordinate[1]
     stations = search_sf_station(stations_file_path, search_lat, search_lon)

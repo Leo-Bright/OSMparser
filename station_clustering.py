@@ -16,7 +16,7 @@ with open(stations_coordinate_file_path) as f:
 
 X = np.array(input_X)
 
-bandwidth = estimate_bandwidth(X, quantile=0.3, n_samples=5000)
+bandwidth = estimate_bandwidth(X, quantile=0.5)
 
 ms = MeanShift(bandwidth=bandwidth, bin_seeding=True)
 
