@@ -13,7 +13,7 @@ def search_sf_station(station_file, search_lat, search_lon):
             station = line[4 - 1:9]
             diff_lat = abs(int(lat)/100 - abs(search_lat))
             diff_lon = abs(int(lon)/100 - abs(search_lon))
-            if diff_lat < 0.3 and diff_lon < 0.3:
+            if diff_lat < 0.2 and diff_lon < 0.2:
                 stations.add((station, lat_all, lon_all))
 
     return stations
@@ -118,14 +118,29 @@ def output_station_lat_lon(stations_file_path, output_file_path):
         for line in f:
             id = line[3:9]
             lat = line[51:57]
-            lon = line[59:66]
+            lon = line[59:66].lstrip()
             if lat.strip() == '' or lon.strip() == '':
                 continue
-            stations_coordinate.append((id, int(lat)/10000, int(lon)/10000))
+
+            lat = int(lat)/10000
+            lon = lon.strip()
+            if lon[0] == '1' or lon[0] == '-':
+                lon = lon[:3] + '.' + lon[3:]
+                lon = float(lon)
+            else:
+                lon = lon[:2] + '.' + lon[2:]
+                lon = float(lon)
+            stations_coordinate.append((id, lat, lon))
 
     with open(output_file_path, 'w+') as f:
         for item in stations_coordinate:
             id, lat, lon = item
+            lat = str(lat)
+            lon = str(lon)
+            if lat[0] == '-':
+                lat = lat[1:]
+            if lon[0] =='-':
+                lon = lon[1:]
             f.write(id + ' ' + str(lat) + ' -' + str(lon))
             f.write('\n')
 
@@ -140,8 +155,9 @@ if __name__ == '__main__':
 
     # output_station_lat_lon(stations_file_path, lat_lon_file_path)
 
-    search_lat = 37.9240238
-    search_lon = -122.3927279
+    search_coordinate = [21.22269286, -157.64991494]
+    search_lat = search_coordinate[0]
+    search_lon = search_coordinate[1]
     stations = search_sf_station(stations_file_path, search_lat, search_lon)
 
     print(stations)
