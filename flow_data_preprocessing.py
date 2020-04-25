@@ -1,19 +1,19 @@
-def search_sf_station(station_file):
+def search_sf_station(station_file, search_lat, search_lon):
 
     stations = set()
 
     with open(station_file) as f:
         for line in f:
-            lat = line[51:53]
+            lat = line[51:55]
             lat_all = line[51:59]
-            lon = line[59:62]
+            lon = line[59:64]
             lon_all = line[59:68]
             if lat.strip() == '' or lon.strip() == '':
                 continue
             station = line[4 - 1:9]
-            diff_lat = abs(int(lat) - 37.5)
-            diff_lon = abs(int(lon) - 122.3)
-            if diff_lat < 1 and diff_lon < 1:
+            diff_lat = abs(int(lat)/100 - abs(search_lat))
+            diff_lon = abs(int(lon)/100 - abs(search_lon))
+            if diff_lat < 0.3 and diff_lon < 0.3:
                 stations.add((station, lat_all, lon_all))
 
     return stations
@@ -110,14 +110,45 @@ def output_flow_stat(stations_flow_data, output_file_path):
                         str(stat_data['weekend_avg']) + '\n')
 
 
+def output_station_lat_lon(stations_file_path, output_file_path):
+
+    stations_coordinate = []
+
+    with open(stations_file_path) as f:
+        for line in f:
+            id = line[3:9]
+            lat = line[51:57]
+            lon = line[59:66]
+            if lat.strip() == '' or lon.strip() == '':
+                continue
+            stations_coordinate.append((id, int(lat)/10000, int(lon)/10000))
+
+    with open(output_file_path, 'w+') as f:
+        for item in stations_coordinate:
+            id, lat, lon = item
+            f.write(id + ' ' + str(lat) + ' -' + str(lon))
+            f.write('\n')
+
+
 if __name__ == '__main__':
 
     flow_month = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
 
-    stations = search_sf_station('sanfrancisco/dataset/flow_data/TMAS2012.sta')
+    stations_file_path = 'sanfrancisco/dataset/flow_data/TMAS2012.sta'
 
-    s_flow_data = find_station_flow_data(flow_month, stations)
+    lat_lon_file_path = 'sanfrancisco/dataset/flow_data/tmas2012_stations.coordinate'
 
-    flow_stat_file_path = 'sanfrancisco/dataset/flow_data/flow_data_stat_2.sanfrancisco'
+    # output_station_lat_lon(stations_file_path, lat_lon_file_path)
 
-    output_flow_stat(s_flow_data, flow_stat_file_path)
+    search_lat = 37.9240238
+    search_lon = -122.3927279
+    stations = search_sf_station(stations_file_path, search_lat, search_lon)
+
+    print(stations)
+    print(len(stations))
+
+    # s_flow_data = find_station_flow_data(flow_month, stations)
+    #
+    # flow_stat_file_path = 'sanfrancisco/dataset/flow_data/flow_data_stat_2.sanfrancisco'
+    #
+    # output_flow_stat(s_flow_data, flow_stat_file_path)
