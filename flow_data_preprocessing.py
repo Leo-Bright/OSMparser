@@ -13,7 +13,7 @@ def search_sf_station(station_file, search_lat, search_lon):
             station = line[4 - 1:9]
             diff_lat = abs(int(lat)/100 - abs(search_lat))
             diff_lon = abs(int(lon)/100 - abs(search_lon))
-            if diff_lat < 0.2 and diff_lon < 0.2:
+            if diff_lat < 0.4 and diff_lon < 0.4:
                 stations.add((station, lat_all, lon_all))
 
     return stations
@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
     # output_station_lat_lon(stations_file_path, lat_lon_file_path)
 
-    search_coordinate = [21.22269286, -157.64991494]
+    search_coordinate = [86.14363913, -98.03430435]
     search_lat = search_coordinate[0]
     search_lon = search_coordinate[1]
     stations = search_sf_station(stations_file_path, search_lat, search_lon)
