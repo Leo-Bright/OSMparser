@@ -41,7 +41,7 @@ class OSMCounter(object):
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('philadelphia/dataset/Philadelphia.osm-2.pbf')
+p.parse('london/dataset/London.osm.pbf')
 
-with open('philadelphia/dataset/philadelphia_parsed_obj.pkl', 'wb') as f:
+with open('london/dataset/london_parsed_obj.pkl', 'wb') as f:
     pkl.dump(counter, f)

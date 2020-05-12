@@ -1,4 +1,5 @@
 from imposm.parser import OSMParser
+import pickle as pkl
 import json
 
 
@@ -9,50 +10,6 @@ class OSMCounter(object):
     nodeDic = {} #{osmid:(tag, coordinary)}
     highwayDic = {} #{osmid:(tag, refs)}
     wayDic = {} #{osmid:(tag, refs)}
-
-    def count_tags(self, output_file, type='way', output='formal', order=True, selected_node_path = 'porto/network/selected_nodes.json'):
-        tagsDict = {}  # {key:{value:count}}
-        tagsCountList = []  # [(key,value,count)]
-        if type == 'way':
-            objDict = self.wayDic
-        if type == 'highway':
-            objDict = self.highwayDic
-        if type == 'node':
-            objDict = self.nodeDic
-        if type == 'selected_node':
-            try:
-                f_selected_nodes = open(selected_node_path, 'r')
-                objDict = json.loads(f_selected_nodes.readline())
-                f_selected_nodes.close()
-            except:
-                objDict = {}
-            print("selected nodes count:", len(objDict.keys()))
-        for osmid, tags_and_others in objDict.items():
-            tags = tags_and_others[0]
-            for k, v in tags.items():
-                if k not in tagsDict:
-                    tagsDict[k] = {}
-                if v not in tagsDict[k]:
-                    tagsDict[k][v] = 1
-                else:
-                    tagsDict[k][v] += 1
-        if output=='json':
-            output_file.write(json.dumps(tagsDict))
-        else:
-            for key, value_count in tagsDict.items():
-                for value, count in value_count.items():
-                    tagsCountList.append((key, value, count))
-            if order:
-                tagsCountList.sort(key=lambda x: x[-1], reverse=True)
-            for key, value, count in tagsCountList:
-                try:
-                    output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
-                except:
-                    if not isinstance(key, int):
-                        key = key.encode('utf8')
-                    if not isinstance(value, int):
-                        value = value.encode('utf8')
-                    output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
 
     def ways(self, ways):
         # callback method for ways
@@ -77,42 +34,75 @@ class OSMCounter(object):
             self.relationDic[osmid] = (tags, refs)
 
 
-# instantiate counter and parser and start parsing Proto ways
-counter = OSMCounter()
-p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
-              coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('chicago/dataset/Chicago.osm.pbf')
+def count_tags(counter_obj, output_file, type='way', output='formal', order=True, selected_node_path = 'porto/network/selected_nodes.json'):
+    tagsDict = {}  # {key:{value:count}}
+    tagsCountList = []  # [(key,value,count)]
+    if type == 'way':
+        objDict = counter_obj.wayDic
+    if type == 'highway':
+        objDict = counter_obj.highwayDic
+    if type == 'node':
+        objDict = counter_obj.nodeDic
+    if type == 'selected_node':
+        try:
+            with open(selected_node_path, 'r') as f_selected_nodes:
+                objDict = json.loads(f_selected_nodes.readline())
+        except:
+            objDict = {}
+        print("selected nodes count:", len(objDict.keys()))
+    for osmid, tags_and_others in objDict.items():
+        tags = tags_and_others[0]
+        for k, v in tags.items():
+            if k not in tagsDict:
+                tagsDict[k] = {}
+            if v not in tagsDict[k]:
+                tagsDict[k][v] = 1
+            else:
+                tagsDict[k][v] += 1
+    if output=='json':
+        output_file.write(json.dumps(tagsDict))
+    else:
+        for key, value_count in tagsDict.items():
+            for value, count in value_count.items():
+                tagsCountList.append((key, value, count))
+        if order:
+            tagsCountList.sort(key=lambda x: x[-1], reverse=True)
+        for key, value, count in tagsCountList:
+            try:
+                output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
+            except:
+                if not isinstance(key, int):
+                    key = key.encode('utf8')
+                if not isinstance(value, int):
+                    value = value.encode('utf8')
+                output_file.write(str(key) + '\t\t' + str(value) + '\t\t' + str(count) + '\n')
 
 
 # write the way's tag to file
-def extract_way_tag_info(output):
-    f_ways_tags = open(r'sanfrancisco/tag/ways.tag', 'w+')
-    counter.count_tags(f_ways_tags, type='way', output='formal', order=True)
-    f_ways_tags.close()
+def extract_way_tag_info(counter_obj, output):
+    with open(output, 'w+') as f_ways_tags:
+        count_tags(counter_obj, f_ways_tags, type='way', output='formal', order=True)
 
 
 # write the highway's tag to file
-def extract_highway_tag_info():
-    f_highway_tags = open(r'sanfrancisco/tag/highway.tag', 'w+')
-    counter.count_tags(f_highway_tags, type='highway', output='formal', order=True)
-    f_highway_tags.close()
+def extract_highway_tag_info(counter_obj):
+    with open(r'sanfrancisco/tag/highway.tag', 'w+') as f_highway_tags:
+        count_tags(counter_obj, f_highway_tags, type='highway', output='formal', order=True)
 
 
 # write the node's tag to file
-def extract_node_tag_info():
-    f_nodes_tags = open(r'sanfrancisco/tag/nodes.tag', 'w+')
-    counter.count_tags(f_nodes_tags, type='node', output='formal', order=True)
-    f_nodes_tags.close()
+def extract_node_tag_info(counter_obj):
+    with open(r'sanfrancisco/tag/nodes.tag', 'w+') as f_nodes_tags:
+        count_tags(counter_obj, f_nodes_tags, type='node', output='formal', order=True)
 
 
 # write the selected_node's tag to file
-def extract_network_node_tag_info():
-    f_selected_nodes_tag = open(r'sanfrancisco/tag/selected_nodes_onlyNode.tag', 'w+')
-    counter.count_tags(f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'sanfrancisco/network/selected_nodes_onlyNode.json')
-    f_selected_nodes_tag.close()
+def extract_network_node_tag_info(counter_obj):
+    with open(r'sanfrancisco/tag/selected_nodes_onlyNode.tag', 'w+') as f_selected_nodes_tag:
+        count_tags(counter_obj, f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'sanfrancisco/network/selected_nodes_onlyNode.json')
 
 
-def extract_road_segment_tag_info(road_segments_file, output, key=None):
+def extract_road_segment_tag_info(counter_obj, road_segments_file, output, key=None):
     way_count = {}
     with open(road_segments_file) as f:
         road_segments = json.loads(f.readline())
@@ -126,7 +116,7 @@ def extract_road_segment_tag_info(road_segments_file, output, key=None):
     tags_dict = {}
     tags_dict[key] = {}
     with open(output, 'w+') as f:
-        for osmid, tags_and_others in counter.highwayDic.items():
+        for osmid, tags_and_others in counter_obj.highwayDic.items():
             tags = tags_and_others[0]
             if str(osmid) in way_count:
                 coefficient = way_count[str(osmid)]
@@ -199,10 +189,10 @@ def statistical_road_segment_class_id(road_segments_file):
         print(str(key) + '\t' + type_name + '\t' + str(value))
 
 
-def extract_highway_tag_file(output):
+def extract_highway_tag_file(counter_obj, output):
     with open(output, 'w+') as f:
         result = {}
-        for osmid, tags_and_others in counter.highwayDic.items():
+        for osmid, tags_and_others in counter_obj.highwayDic.items():
             tags = tags_and_others[0]
             result[osmid] = tags
         f.write(json.dumps(result))
@@ -210,13 +200,17 @@ def extract_highway_tag_file(output):
 
 if __name__ == '__main__':
 
-    # extract_way_tag_info(output='sanfrancisco/tag/ways.tag')
+    city_name = 'london'
+    with open(city_name + '/dataset/london_parsed_obj.pkl', 'rb') as f:
+        parsed_obj = pkl.load(f)
 
-    # extract_road_segment_tag_info(road_segments_file='porto/dataset/all_road_segments_dict.porto',
+    # extract_way_tag_info(parsed_obj, output=city_name + '/tag/' + city_name + 'ways.tag')
+
+    # extract_road_segment_tag_info(parsed_obj, road_segments_file='porto/dataset/all_road_segments_dict.porto',
     #                               output='porto/tag/road_segment_tag_info.porto',
     #                               key='tiger:name_base',)
 
-    extract_highway_tag_file(output='chicago/tag/chicago_road_segment_tag.json')
+    extract_highway_tag_file(parsed_obj, output=city_name + '/tag/' + city_name + 'road_segment_tag.json')
 
     # statistical_road_segment_class_id(road_segments_file='porto/dataset/all_road_segments_dict.porto')
 
