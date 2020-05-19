@@ -58,8 +58,27 @@ def search_sf_station(station_file):
     return stations
 
 
+def delete_zero_of_walks(input, output):
 
-stations = search_sf_station('sanfrancisco/dataset/TMAS2012.sta')
-for item in stations:
-    print(item)
-print(len(stations))
+    new_walks = []
+
+    with open(input) as f:
+        for line in f:
+            id_zeros = line.strip().split(' ')
+            ids = id_zeros[::2]
+            new_walks.append(ids)
+
+    with open(output, 'w+') as f:
+        for walk in new_walks:
+            f.write(' '.join(walk) + '\n')
+
+
+if __name__ == '__main__':
+
+    # stations = search_sf_station('sanfrancisco/dataset/TMAS2012.sta')
+    # for item in stations:
+    #     print(item)
+    # print(len(stations))
+
+    delete_zero_of_walks('sanfrancisco/network/sanfrancisco_shortest.walks',
+                         'sanfrancisco/network/sanfrancisco_shortest_nozero.walks')
