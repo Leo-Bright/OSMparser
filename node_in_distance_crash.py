@@ -1,28 +1,15 @@
-import parser
 from math import radians, cos, sin, asin, sqrt
-import json, copy, pickle as pkl
+import json, copy, pickle
 
 
-def get_parent_dir(path):
-    parent_dir, _ = path.split('/', 1)
-    return parent_dir
+def generate_node_tags_file(city):
 
-
-def get_up_layer_path(path):
-    path, _ = path.rsplit('/', 1)
-    return path
-
-
-def gen_node_tags_json(city_path, parsed_obj_path):
-
-    with open(parsed_obj_path, 'rb') as f:
-        parsed_obj = pkl.load(f)
+    p.parse(city)
     node_tags = {}
-
     # write the multi node tag to json file
-    path, _ = get_up_layer_path(city_path)
+    path, _ = city.rsplit('/', 1)
     output_tags = path + '/node_tags.json'
-    all_node = parsed_obj.nodeDic
+    all_node = counter.nodeDic
     for key in all_node:
         node_tags[str(key)] = {}
         tags, co = all_node[key]
@@ -33,8 +20,8 @@ def gen_node_tags_json(city_path, parsed_obj_path):
     return node_tags
 
 
-def get_index_from_list(array, start, end, lat):
-    mid_index = (end - start)//2 + start
+def get_index_from_list(array, start, end, lat):           #
+    mid_index = (end - start)//2 + start        #
     if start <= end:
         if array[mid_index][1][1] < lat:
             return get_index_from_list(array, mid_index+1, end, lat)
@@ -47,9 +34,9 @@ def get_index_from_list(array, start, end, lat):
 
 
 def get_nodes_from_list(array, lat):
-    acc = 0.0005
-    start = get_index_from_list(array, 0, len(array) - 1, lat - acc)
-    end = get_index_from_list(array, 0, len(array) - 1, lat + acc)
+    acc = 0.0002
+    start = get_index_from_list(array, 0, len(array), lat - acc)
+    end = get_index_from_list(array, 0, len(array), lat + acc)
     return array[start:end]
 
 
@@ -63,34 +50,31 @@ def get_distance(lng1, lat1, lng2, lat2):
 
 
 # generate city's lat/lon file
-def gen_city_coordinate_json(cities_path, parsed_obj_path):
-
-    for city_path in cities_path:
-        print 'generate city coordinate json file: ' + city_path
-        with open(parsed_obj_path, 'rb') as f:
-            parsed_obj = pkl.load(f)
-        ct = get_parent_dir(city_path)
+def generate_city_coordinate_file(cities):
+    for city in cities:
+        print city
+        p.parse(city)
+        ct, _ = city.split('/', 1)
         network_file = ct + '/network/' + ct + '.network'
-        path = get_up_layer_path(city_path)
-
-        node2coords = {}
-        for osm_id in parsed_obj.nodeDic:
-            node2coords[str(osm_id)] = parsed_obj.nodeDic[osm_id][1]
-        for osm_id in parsed_obj.coordDic:
-            node2coords[str(osm_id)] = parsed_obj.coordDic[osm_id]
+        path, _ = city.rsplit('/', 1)
+        node_to_coords = {}
+        for osm_id in counter.nodeDic:
+            node_to_coords[str(osm_id)] = counter.nodeDic[osm_id][1]
+        for osm_id in counter.coordDic:
+            node_to_coords[str(osm_id)] = counter.coordDic[osm_id]
         coordinate_file = path + '/node_coordinate.json'
         with open(coordinate_file, 'w+') as f:
-            f.write(json.dumps(node2coords))
+            f.write(json.dumps(node_to_coords))
 
         node_coordinate = []
         node_read = set()
-        with open(network_file) as f:
+        with open(network_file, 'r') as f:
             for line in f:
                 for node in line.strip().split(' '):
                     if node in node_read:
                         continue
                     node_read.add(node)
-                    coordinate = node2coords[str(node)]
+                    coordinate = node_to_coords[node]
                     node_coordinate.append((node, coordinate))
 
         with open(path + '/node_coordinate_lat.txt', 'w+') as lat_file:
@@ -105,10 +89,10 @@ def gen_city_coordinate_json(cities_path, parsed_obj_path):
 
 
 # supplement stop_tag for network highway node
-def supp_node2tags_in_network(city_path, node_to_tags, mta_file):
-    ct = get_parent_dir(city_path)
+def gen_node_to_tags_in_network(city, node_to_tags, mta_file):
+    ct, _ = city.split('/', 1)
     network_file = ct + '/network/' + ct + '.network'
-    path = get_up_layer_path(city_path)
+    path, _ = city.rsplit('/', 1)
     coordinate_file = path + '/node_coordinate.json'
     node_tags_in_network = {}
 
@@ -179,9 +163,9 @@ def supp_node2tags_in_network(city_path, node_to_tags, mta_file):
     return node_tags_in_network
 
 
-def statistics(city_path, node_to_tags, tag):
+def statistics(city, node_to_tags, tag):
     stat_count = 0
-    ct = get_parent_dir(city_path)
+    ct, _ = city.split('/', 1)
     network_file = ct + '/network/' + ct + '.network'
     with open(network_file, 'r') as f:
         for line in f:
@@ -196,13 +180,13 @@ def statistics(city_path, node_to_tags, tag):
     return stat_count
 
 
-def statistics_avg_distance(cities_path):
-    for city_path in cities_path:
-        print("start statistic for ", city_path)
+def statistics_avg_distance(cities):
+    for city in cities:
+        print("start statistic for ", city)
         roadsegment = 0
         total_dis = 0
-        ct = get_parent_dir(city_path)
-        path = get_up_layer_path(city_path)
+        ct, _ = city.split('/', 1)
+        path, _ = city.rsplit('/', 1)
         network_file = ct + '/network/' + ct + '.network'
         coordinate_file = path + '/node_coordinate.json'
         with open(coordinate_file, 'r') as f:
@@ -229,8 +213,8 @@ def gen_increament_tag_file(city, node_to_tags_in_network):
 
     for tag_class in tag_classes:
         # write the multi node tag to json file
-        path = get_up_layer_path(city)
-        ct = get_parent_dir(city)
+        path, _ = city.rsplit('/', 1)
+        ct, _ = city.split('/', 1)
         network_file = ct + '/network/' + ct + '.network'
         output_file = path + '/node_with_' + tag_class[4] + '_increament_stop.tag'
         with open(output_file, 'w+') as output:
@@ -249,109 +233,23 @@ def gen_increament_tag_file(city, node_to_tags_in_network):
                             output.write(node + ' ' + str(node_tag_index + 1) + '\n')
 
 
-# comput overlap node in network from crash file
-def compute_overlap_crash_node(city_path, crash_file_path, highway=True, allNodes=False):
-
-    crash_coordinates = []
-    with open(crash_file_path) as f:
-        first_line = True
-        for line in f:
-            if first_line:
-                first_line = False
-                continue
-            items = line.strip().split(',')
-            crn = items[0]
-            lon = items[-3].strip('"')
-            lat = items[-4].strip('"')
-            if lat == '' or lon == '':
-                continue
-            else:
-                lon = float(lon)
-                lat = float(lat)
-            crash_coordinates.append((lon, lat))
-
-    ct = get_parent_dir(city_path)
-    network_file_path = ct + '/network/' + ct
-    if not highway:
-        network_file_path = network_file_path + '_allWays'
-    if allNodes:
-        network_file_path = network_file_path + '_allNodes.network'
-    else:
-        network_file_path = network_file_path + '.network'
-    path = get_up_layer_path(city_path)
-    coordinate_file = path + '/node_coordinate.json'
-
-    node_tags_in_network = {}
-
-    with open(coordinate_file, 'r') as f:
-        node2coords = json.loads(f.readline())
-
-    node_coordinate = []
-    node_read = set()
-    with open(network_file_path, 'r') as f:
-        for line in f:
-            for node in line.strip().split(' '):
-
-                if node in node_read:
-                    continue
-
-                node_read.add(node)
-                coordinate = node2coords[node]
-                coordinate = [float(coordinate[0]), float(coordinate[1])]
-                node_coordinate.append((node, coordinate))
-
-    node_coordinate_lat = copy.copy(node_coordinate)
-    node_coordinate_lat.sort(key=lambda ele: ele[1][1])
-
-    available = 0
-    for _coords in crash_coordinates:
-        have_availables = False
-        (_lon, _lat) = _coords
-        _nodes = get_nodes_from_list(node_coordinate_lat, _lat)
-        min_distance = float('inf')
-        min_node = None
-        for _node in _nodes:
-            (node_lon, node_lat) = _node[1]
-            dis = get_distance(_lon, _lat, node_lon, node_lat)
-            if dis <= min_distance:
-                min_distance = dis
-                min_node = _node[0]
-            if min_distance > 50:
-                continue
-            else:
-                have_availables = True
-
-        if have_availables:
-            available += 1
-
-    print "availables: ", available
-    return node_tags_in_network
-
-
 if __name__ == '__main__':
 
     phil_parsed_obj_pkl = 'philadelphia/dataset/philadelphia_parsed_obj.pkl'
-
-    mta_signals_file = 'sanfrancisco/dataset/MTA.signals_data.csv'
     mta_stops_file = 'sanfrancisco/dataset/MTA.stopsigns_data.csv'
 
-    cities_path = ['sanfrancisco/dataset/SanFrancisco.osm.pbf',
-              'porto/dataset/Porto.osm.pbf',
-              'tokyo/dataset/Tokyo.osm.pbf',
-              'philadelphia/dataset/Philadelphia.osm-2.pbf'
+    cities = ['philadelphia/dataset/Philadelphia.osm-2.pbf',
               ]
 
-    # node2tags = gen_node_tags_json(cities_path[3], phil_parsed_obj_pkl)
+    # node_to_tags = generate_node_tags_file(cities[0])
 
-    # gen_city_coordinate_json(cities_path[3:], phil_parsed_obj_pkl)
+    # generate_city_coordinate_file(cities)
 
-    # supplemeted_node2tags = supp_node2tags_in_network(cities_path[0], node2tags, mta_stops_file)
+    # node_to_tags_in_network = gen_node_to_tags_in_network(cities[0], node_to_tags, mta_stops_file)
 
-    compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
+    # gen_increament_tag_file(cities[0], node_to_tags_in_network)
 
-    # gen_increament_tag_file(cities_path[0], supplemeted_node2tags)
+    # print statistics(cities[0], node_to_tags, 'traffic_signals')
 
-    # print statistics(cities_path[0], node2tags, 'traffic_signals')
-
-    # statistics_avg_distance(cities_path)
+    statistics_avg_distance(cities)
 
