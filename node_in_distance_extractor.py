@@ -171,8 +171,6 @@ def supp_node2tags_in_network(city_path, node_to_tags, mta_file):
                     node_tags_in_network[min_node] = {}
                 node_tags_in_network[min_node]['highway'] = 'stop'
                 have_availables = True
-
-                node_tags_in_network[min_node]['highway'] = 'stop'
         if have_availables:
             available += 1
     print "availables: ", available
