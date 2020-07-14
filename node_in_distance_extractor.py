@@ -193,8 +193,6 @@ def gen_node_to_tags_in_network(city, node_to_tags, mta_file):
                     node_tags_in_network[min_node] = {}
                 node_tags_in_network[min_node]['highway'] = 'stop'
                 have_availables = True
-
-                node_tags_in_network[min_node]['highway'] = 'stop'
         if have_availables:
             available += 1
     print "availables: ", available
@@ -241,6 +239,7 @@ def statistics_distance(cities):
         print("average distance is ", total_dis/roadsegment)
 
 
+# generate city's increament_stop.tag
 def run(city, node_to_tags_in_network):
 
     tag_without_crossing = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'traffic_signals', 'stop',
