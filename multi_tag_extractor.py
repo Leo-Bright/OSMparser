@@ -44,8 +44,9 @@ cities = ['sanfrancisco/dataset/SanFrancisco.osm.pbf',
 
 tag_without_crossing = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'traffic_signals', 'stop', 'speed_camera', 'motorway_junction', 'mini_roundabout']
 tag_without_traffic = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'crossing', 'stop', 'speed_camera', 'motorway_junction', 'mini_roundabout']
-tag_without_all = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'stop', 'speed_camera', 'motorway_junction', 'mini_roundabout']
-tag_classes = [tag_without_crossing, tag_without_traffic]
+tag_without_stop = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'traffic_signals', 'crossing', 'speed_camera', 'motorway_junction', 'mini_roundabout']
+tag_without_crossing_and_traffic = ['turning_loop', 'give_way', 'bus_stop', 'turning_circle', 'stop', 'speed_camera', 'motorway_junction', 'mini_roundabout']
+tag_classes = [tag_without_crossing, tag_without_traffic, tag_without_stop]
 
 # extract node_with_crossing.tag file
 for tag_class in tag_classes:
