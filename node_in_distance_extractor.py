@@ -110,10 +110,13 @@ def supp_node2tags_in_network(city_path, node_to_tags, mta_file):
     network_file = ct + '/network/' + ct + '.network'
     path = get_up_layer_path(city_path)
     coordinate_file = path + '/node_coordinate.json'
+    supplement_stop_node = path + '/node_supplement.txt'
     node_tags_in_network = {}
 
     with open(coordinate_file, 'r') as f:
         node_to_coords = json.loads(f.readline())
+
+    supplement_stop_node_file = open(supplement_stop_node, 'w+')
 
     node_coordinate = []
     node_read = set()
@@ -169,6 +172,8 @@ def supp_node2tags_in_network(city_path, node_to_tags, mta_file):
             else:
                 if min_node not in node_tags_in_network:
                     node_tags_in_network[min_node] = {}
+                else:
+                    supplement_stop_node_file.write(min_node + '\n')
                 node_tags_in_network[min_node]['highway'] = 'stop'
                 have_availables = True
         if have_availables:
@@ -328,7 +333,7 @@ def compute_overlap_crash_node(city_path, crash_file_path, highway=True, allNode
 
 if __name__ == '__main__':
 
-    phil_parsed_obj_pkl = 'philadelphia/dataset/philadelphia_parsed_obj.pkl'
+    parsed_obj_pkl = 'sanfrancisco/dataset/sanfrancisco_parsed_obj.pkl'
 
     mta_signals_file = 'sanfrancisco/dataset/MTA.signals_data.csv'
     mta_stops_file = 'sanfrancisco/dataset/MTA.stopsigns_data.csv'
@@ -339,13 +344,13 @@ if __name__ == '__main__':
               'philadelphia/dataset/Philadelphia.osm-2.pbf'
               ]
 
-    # node2tags = gen_node_tags_json(cities_path[3], phil_parsed_obj_pkl)
+    node2tags = gen_node_tags_json(cities_path[3], parsed_obj_pkl)
 
-    # gen_city_coordinate_json(cities_path[3:], phil_parsed_obj_pkl)
+    # gen_city_coordinate_json(cities_path[:1], parsed_obj_pkl)
 
-    # supplemeted_node2tags = supp_node2tags_in_network(cities_path[0], node2tags, mta_stops_file)
+    supplemeted_node2tags = supp_node2tags_in_network(cities_path[0], node2tags, mta_stops_file)
 
-    compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
+    # compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
 
     # gen_increament_tag_file(cities_path[0], supplemeted_node2tags)
 
