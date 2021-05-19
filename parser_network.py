@@ -51,9 +51,9 @@ def print_osm_tag(osm_parsed_obj, output_file_path, osmid=False):
             output_file.write(tag + '\n')
 
 
-with open('newyork/dataset/NewYork_parsed_obj.pkl', 'rb') as f:
+with open('newyork/dataset/newyork_parsed_obj.pkl', 'rb') as f:
     parsed_obj = pkl.load(f)
 
 # highways road network with all nodes
-highway_network_path = 'newyork/dataset/NewYork_highway.network'
+highway_network_path = 'newyork/network/NewYork_highway.network'
 print_osm_network(parsed_obj, highway_network_path, highway=True, allNodes=True, onlyNode=False, forLINE=False)

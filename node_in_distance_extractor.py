@@ -1,4 +1,4 @@
-import parser
+from parser import OSMCounter
 from math import radians, cos, sin, asin, sqrt
 import json, copy, pickle as pkl
 
@@ -20,7 +20,7 @@ def gen_node_tags_json(city_path, parsed_obj_path):
     node_tags = {}
 
     # write the multi node tag to json file
-    path, _ = get_up_layer_path(city_path)
+    path = get_up_layer_path(city_path)
     output_tags = path + '/node_tags.json'
     all_node = parsed_obj.nodeDic
     for key in all_node:
@@ -333,22 +333,25 @@ def compute_overlap_crash_node(city_path, crash_file_path, highway=True, allNode
 
 if __name__ == '__main__':
 
-    parsed_obj_pkl = 'sanfrancisco/dataset/sanfrancisco_parsed_obj.pkl'
+    city_name = 'newyork'
+
+    parsed_obj_pkl = city_name + '/dataset/' + city_name + '_parsed_obj.pkl'
 
     mta_signals_file = 'sanfrancisco/dataset/MTA.signals_data.csv'
     mta_stops_file = 'sanfrancisco/dataset/MTA.stopsigns_data.csv'
 
     cities_path = ['sanfrancisco/dataset/SanFrancisco.osm.pbf',
-              'porto/dataset/Porto.osm.pbf',
-              'tokyo/dataset/Tokyo.osm.pbf',
-              'philadelphia/dataset/Philadelphia.osm-2.pbf'
-              ]
+                   'porto/dataset/Porto.osm.pbf',
+                   'tokyo/dataset/Tokyo.osm.pbf',
+                   'philadelphia/dataset/Philadelphia.osm-2.pbf',
+                   'newyork/dataset/newyork.osm.pbf'
+                   ]
 
-    node2tags = gen_node_tags_json(cities_path[3], parsed_obj_pkl)
+    node2tags = gen_node_tags_json(cities_path[4], parsed_obj_pkl)
 
-    # gen_city_coordinate_json(cities_path[:1], parsed_obj_pkl)
+    gen_city_coordinate_json(cities_path[-1:], parsed_obj_pkl)
 
-    supplemeted_node2tags = supp_node2tags_in_network(cities_path[0], node2tags, mta_stops_file)
+    # supplemeted_node2tags = supp_node2tags_in_network(cities_path[0], node2tags, mta_stops_file)
 
     # compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
 
