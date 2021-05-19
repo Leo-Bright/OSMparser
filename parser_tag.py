@@ -1,40 +1,9 @@
-from imposm.parser import OSMParser
+from parser import OSMCounter
 import pickle as pkl
 import json
 
 
-# simple class that handles the parsed OSM data.
-class OSMCounter(object):
-    relationDic = {} #{osmid:(tag, refs)}
-    coordDic = {} #{osmid:(lat, lon)}
-    nodeDic = {} #{osmid:(tag, coordinary)}
-    highwayDic = {} #{osmid:(tag, refs)}
-    wayDic = {} #{osmid:(tag, refs)}
-
-    def ways(self, ways):
-        # callback method for ways
-        for osmid, tags, refs in ways:
-            if 'highway' in tags:
-                self.highwayDic[osmid] = (tags, refs)
-            self.wayDic[osmid] = (tags, refs)
-
-    def nodes(self, nodes):
-        # callback method for nodes
-        for osmid, tags, coordinary in nodes:
-            self.nodeDic[osmid] = (tags, coordinary)
-
-    def coords(self, coords):
-        # callback method for coords
-        for osmid, lat, lon in coords:
-            self.coordDic[osmid] = (lat, lon)
-
-    def relations(self, relations):
-        # callback method for relations
-        for osmid, tags, refs in relations:
-            self.relationDic[osmid] = (tags, refs)
-
-
-def count_tags(counter_obj, output_file, type='way', output='formal', order=True, selected_node_path = 'porto/network/selected_nodes.json'):
+def count_tags(counter_obj, output_file, type='way', output='formal', order=True, selected_node_path='porto/network/selected_nodes.json'):
     tagsDict = {}  # {key:{value:count}}
     tagsCountList = []  # [(key,value,count)]
     if type == 'way':
@@ -50,6 +19,7 @@ def count_tags(counter_obj, output_file, type='way', output='formal', order=True
         except:
             objDict = {}
         print("selected nodes count:", len(objDict.keys()))
+
     for osmid, tags_and_others in objDict.items():
         tags = tags_and_others[0]
         for k, v in tags.items():
@@ -85,21 +55,23 @@ def extract_way_tag_info(counter_obj, output):
 
 
 # write the highway's tag to file
-def extract_highway_tag_info(counter_obj):
-    with open(r'sanfrancisco/tag/highway.tag', 'w+') as f_highway_tags:
+def extract_highway_tag_info(counter_obj, output):
+    with open(output, 'w+') as f_highway_tags:
         count_tags(counter_obj, f_highway_tags, type='highway', output='formal', order=True)
 
 
 # write the node's tag to file
-def extract_node_tag_info(counter_obj):
-    with open(r'sanfrancisco/tag/nodes.tag', 'w+') as f_nodes_tags:
+def extract_node_tag_info(counter_obj, output):
+    with open(output, 'w+') as f_nodes_tags:
         count_tags(counter_obj, f_nodes_tags, type='node', output='formal', order=True)
 
 
 # write the selected_node's tag to file
-def extract_network_node_tag_info(counter_obj):
-    with open(r'sanfrancisco/tag/selected_nodes_onlyNode.tag', 'w+') as f_selected_nodes_tag:
-        count_tags(counter_obj, f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'sanfrancisco/network/selected_nodes_onlyNode.json')
+def extract_network_node_tag_info(counter_obj, selected_node, output):
+    # with open(r'sanfrancisco/tag/selected_nodes_onlyNode.tag', 'w+') as f_selected_nodes_tag:
+    with open(output, 'w+') as f_selected_nodes_tag:
+        # count_tags(counter_obj, f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path = 'sanfrancisco/network/selected_nodes_onlyNode.json')
+        count_tags(counter_obj, f_selected_nodes_tag, type='selected_node', output='formal', order=True, selected_node_path=selected_node)
 
 
 def extract_road_segment_tag_info(counter_obj, road_segments_file, output, key=None):
@@ -200,17 +172,18 @@ def extract_highway_tag_file(counter_obj, output):
 
 if __name__ == '__main__':
 
-    city_name = 'london'
-    with open(city_name + '/dataset/london_parsed_obj.pkl', 'rb') as f:
+    city_name = 'NewYork'
+    with open(city_name + '/dataset/' + city_name + '_parsed_obj.pkl', 'rb') as f:
         parsed_obj = pkl.load(f)
 
-    # extract_way_tag_info(parsed_obj, output=city_name + '/tag/' + city_name + 'ways.tag')
+    extract_way_tag_info(parsed_obj, output=city_name + '/tag/' + city_name + '_ways.tag')
+    extract_highway_tag_info(parsed_obj, output=city_name + '/tag/' + city_name + '_highway.tag')
 
     # extract_road_segment_tag_info(parsed_obj, road_segments_file='porto/dataset/all_road_segments_dict.porto',
     #                               output='porto/tag/road_segment_tag_info.porto',
     #                               key='tiger:name_base',)
 
-    extract_highway_tag_file(parsed_obj, output=city_name + '/tag/' + city_name + 'road_segment_tag.json')
+    extract_highway_tag_file(parsed_obj, output=city_name + '/tag/' + city_name + '_highway.json')
 
     # statistical_road_segment_class_id(road_segments_file='porto/dataset/all_road_segments_dict.porto')
 

@@ -1,54 +1,23 @@
-from imposm.parser import OSMParser
+from parser import OSMCounter
 import pickle as pkl
 import json
 
-
-# simple class that handles the parsed OSM data.
-class OSMCounter(object):
-    relationDic = {} #{osmid:(tag, refs)}
-    coordDic = {} #{osmid:(lat, lon)}
-    nodeDic = {} #{osmid:(tag, coordinary)}
-    highwayDic = {} #{osmid:(tag, refs)}
-    wayDic = {} #{osmid:(tag, refs)}
-
-    def ways(self, ways):
-        # callback method for ways
-        for osmid, tags, refs in ways:
-            if 'highway' in tags:
-                self.highwayDic[osmid] = (tags, refs)
-            self.wayDic[osmid] = (tags, refs)
-
-    def nodes(self, nodes):
-        # callback method for nodes
-        for osmid, tags, coordinary in nodes:
-            self.nodeDic[osmid] = (tags, coordinary)
-
-    def coords(self, coords):
-        # callback method for coords
-        for osmid, lat, lon in coords:
-            self.coordDic[osmid] = (lat, lon)
-
-    def relations(self, relations):
-        # callback method for relations
-        for osmid, tags, refs in relations:
-            self.relationDic[osmid] = (tags, refs)
-
-city_name = 'london'
-with open(city_name + '/dataset/london_parsed_obj.pkl', 'rb') as f:
+city_name = 'NewYork'
+with open(city_name + '/dataset/' + city_name + '_parsed_obj.pkl', 'rb') as f:
     parsed_obj = pkl.load(f)
 
 # write the highway info to file
-with open(city_name + '/info/highway.info', 'w+') as f_highway_info:
+with open(city_name + '/info/' + city_name + '_highway.info', 'w+') as f_highway_info:
     for item in parsed_obj.highwayDic.items():
         f_highway_info.write(item.__str__() + '\n')
 
 # write the all ways info to file
-with open(city_name + '/info/ways.info', 'w+') as f_ways_info:
+with open(city_name + '/info/' + city_name + '_ways.info', 'w+') as f_ways_info:
     for item in parsed_obj.wayDic.items():
         f_ways_info.write(item.__str__() + '\n')
 
 # write the all nodes info to file
-with open(city_name + '/info/nodes.info', 'w+') as f_nodes_info:
+with open(city_name + '/info/' + city_name + '_nodes.info', 'w+') as f_nodes_info:
     for item in parsed_obj.nodeDic.items():
         f_nodes_info.write(item.__str__() + '\n')
 
@@ -68,13 +37,12 @@ with open(city_name + '/info/' + value + '.json', 'w+') as f_info:
 
 
 # write the all coords info to file
-with open(city_name + '/info/coords.info', 'w+') as f_coords_info:
+with open(city_name + '/info/' + city_name + '_coords.info', 'w+') as f_coords_info:
     for item in parsed_obj.coordDic.items():
         f_coords_info.write(item.__str__() + '\n')
 
 
 # write the relation info to file
-f_relations_info = open(r'sanfrancisco/info/relations.info', 'w+')
-for item in parsed_obj.relationDic.items():
-    f_relations_info.write(item.__str__() + '\n')
-f_relations_info.close()
+with open(city_name + '/info/' + city_name + '_relations.info', 'w+') as f_relations_info:
+    for item in parsed_obj.relationDic.items():
+        f_relations_info.write(item.__str__() + '\n')
