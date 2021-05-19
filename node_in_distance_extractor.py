@@ -33,6 +33,25 @@ def gen_node_tags_json(city_path, parsed_obj_path):
     return node_tags
 
 
+def gen_node_way_json(city_path, parsed_obj_path):
+
+    with open(parsed_obj_path, 'rb') as f:
+        parsed_obj = pkl.load(f)
+    node2way = {}
+
+    # write the node2way relation to json file
+    path = get_up_layer_path(city_path)
+    output = path + '/node2way.json'
+    ways = parsed_obj.wayDic
+    for key in ways:
+        tag, refs = ways[key]
+        for node in refs:
+            node2way[node] = key
+    with open(output, 'w+') as node2way_file:
+        node2way_file.write(json.dumps(node2way))
+    return node2way
+
+
 def get_index_from_list(array, start, end, lat):
     mid_index = (end - start)//2 + start
     if start <= end:
@@ -348,6 +367,8 @@ if __name__ == '__main__':
                    ]
 
     node2tags = gen_node_tags_json(cities_path[4], parsed_obj_pkl)
+
+    node2ways = gen_node_way_json(cities_path[4], parsed_obj_pkl)
 
     gen_city_coordinate_json(cities_path[-1:], parsed_obj_pkl)
 
