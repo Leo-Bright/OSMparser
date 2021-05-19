@@ -2,7 +2,7 @@ from parser import OSMCounter
 import pickle as pkl
 import json
 
-city_name = 'NewYork'
+city_name = 'newyork'
 with open(city_name + '/dataset/' + city_name + '_parsed_obj.pkl', 'rb') as f:
     parsed_obj = pkl.load(f)
 

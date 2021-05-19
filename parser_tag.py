@@ -172,7 +172,7 @@ def extract_highway_tag_file(counter_obj, output):
 
 if __name__ == '__main__':
 
-    city_name = 'NewYork'
+    city_name = 'newyork'
     with open(city_name + '/dataset/' + city_name + '_parsed_obj.pkl', 'rb') as f:
         parsed_obj = pkl.load(f)
 
