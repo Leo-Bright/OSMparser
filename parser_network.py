@@ -1,4 +1,4 @@
-import parser
+from parser import OSMCounter
 import pickle as pkl
 
 
@@ -51,9 +51,9 @@ def print_osm_tag(osm_parsed_obj, output_file_path, osmid=False):
             output_file.write(tag + '\n')
 
 
-with open('london/dataset/london_parsed_obj.pkl', 'rb') as f:
+with open('newyork/dataset/NewYork_parsed_obj.pkl', 'rb') as f:
     parsed_obj = pkl.load(f)
 
 # highways road network with all nodes
-highway_network_path = 'london/network/london_highway.network'
-print_osm_network(parsed_obj, highway_network_path, highway=True, allNodes=False, onlyNode=False, forLINE=False)
+highway_network_path = 'newyork/dataset/NewYork_highway.network'
+print_osm_network(parsed_obj, highway_network_path, highway=True, allNodes=True, onlyNode=False, forLINE=False)
