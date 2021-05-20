@@ -1,4 +1,3 @@
-from parser import OSMCounter
 from math import radians, cos, sin, asin, sqrt
 import json, copy, pickle as pkl
 
@@ -387,8 +386,6 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
     path = get_up_layer_path(city_path)
     coordinate_file = path + '/node2coords.json'
 
-    print '11111111111'
-
     with open(coordinate_file, 'r') as f:
         node2coords = json.loads(f.readline())
 
@@ -400,6 +397,7 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
     node_coordinate = []
     node_read = set()
     with open(network_file_path, 'r') as f:
+
         for line in f:
             for node in line.strip().split(' '):
 
@@ -414,12 +412,17 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
     node_coordinate_lat = copy.copy(node_coordinate)
     node_coordinate_lat.sort(key=lambda ele: ele[1][1])
 
-    print '22222222222222'
     crash2way = {}
     available = 0
+    count = 0
+    print 'How many crash node should be process: ', len(crash_coordinates)
     for _coords in crash_coordinates:
+
         have_availables = False
         (crash_id, (_lon, _lat)) = _coords
+
+        print 'Start process No' + count + ' crash, id: ', crash_id
+
         _nodes = get_nodes_from_list(node_coordinate_lat, _lat)
         min_distance = float('inf')
         min_node = None
@@ -447,8 +450,6 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
 if __name__ == '__main__':
 
     city_name = 'newyork'
-
-    parsed_obj_pkl = city_name + '/dataset/' + city_name + '_parsed_obj.pkl'
 
     mta_signals_file = 'sanfrancisco/dataset/MTA.signals_data.csv'
     mta_stops_file = 'sanfrancisco/dataset/MTA.stopsigns_data.csv'
