@@ -350,6 +350,85 @@ def compute_overlap_crash_node(city_path, crash_file_path, highway=True, allNode
     return node_tags_in_network
 
 
+# map crash node coordinate to a road segment
+def map_crash_coords_to_segment(city_path, crash_file_path, highway=True, allNodes=False):
+
+    crash_coordinates = []
+    with open(crash_file_path) as f:
+        first_line = True
+        for line in f:
+            if first_line:
+                first_line = False
+                continue
+            items = line.strip().split(',')
+            crashe_id = items[23]
+            lon = items[5].strip()
+            lat = items[4].strip()
+            if lat == '' or lon == '':
+                continue
+            else:
+                lon = float(lon)
+                lat = float(lat)
+            crash_coordinates.append((lon, lat))
+
+    ct = get_parent_dir(city_path)
+    network_file_path = ct + '/network/' + ct
+    if not highway:
+        network_file_path = network_file_path + '_allWays'
+    if allNodes:
+        network_file_path = network_file_path + '_allNodes.network'
+    else:
+        network_file_path = network_file_path + '.network'
+    path = get_up_layer_path(city_path)
+    coordinate_file = path + '/node_coordinate.json'
+
+    node_tags_in_network = {}
+
+    with open(coordinate_file, 'r') as f:
+        node2coords = json.loads(f.readline())
+
+    node_coordinate = []
+    node_read = set()
+    with open(network_file_path, 'r') as f:
+        for line in f:
+            for node in line.strip().split(' '):
+
+                if node in node_read:
+                    continue
+
+                node_read.add(node)
+                coordinate = node2coords[node]
+                coordinate = [float(coordinate[0]), float(coordinate[1])]
+                node_coordinate.append((node, coordinate))
+
+    node_coordinate_lat = copy.copy(node_coordinate)
+    node_coordinate_lat.sort(key=lambda ele: ele[1][1])
+
+    available = 0
+    for _coords in crash_coordinates:
+        have_availables = False
+        (_lon, _lat) = _coords
+        _nodes = get_nodes_from_list(node_coordinate_lat, _lat)
+        min_distance = float('inf')
+        min_node = None
+        for _node in _nodes:
+            (node_lon, node_lat) = _node[1]
+            dis = get_distance(_lon, _lat, node_lon, node_lat)
+            if dis <= min_distance:
+                min_distance = dis
+                min_node = _node[0]
+            if min_distance > 50:
+                continue
+            else:
+                have_availables = True
+
+        if have_availables:
+            available += 1
+
+    print "availables: ", available
+    return node_tags_in_network
+
+
 if __name__ == '__main__':
 
     city_name = 'newyork'
@@ -366,15 +445,17 @@ if __name__ == '__main__':
                    'newyork/dataset/newyork.osm.pbf'
                    ]
 
-    node2tags = gen_node_tags_json(cities_path[4], parsed_obj_pkl)
+    # node2tags = gen_node_tags_json(cities_path[4], parsed_obj_pkl)
 
-    node2ways = gen_node_way_json(cities_path[4], parsed_obj_pkl)
+    # node2ways = gen_node_way_json(cities_path[4], parsed_obj_pkl)
 
-    gen_city_coordinate_json(cities_path[-1:], parsed_obj_pkl)
+    # gen_city_coordinate_json(cities_path[-1:], parsed_obj_pkl)
 
     # supplemeted_node2tags = supp_node2tags_in_network(cities_path[0], node2tags, mta_stops_file)
 
     # compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
+
+    map_crash_coords_to_segment(cities_path[4], 'newyork/dataset/Motor_Vehicle_Collisions_Crashes2018.csv', highway=False, allNodes=True)
 
     # gen_increament_tag_file(cities_path[0], supplemeted_node2tags)
 
