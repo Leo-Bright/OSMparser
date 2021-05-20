@@ -15,13 +15,15 @@ def get_up_layer_path(path):
 
 def gen_node_tags_json(city_path, parsed_obj_path):
 
+    print 'generate node2tag json file for ', city_path
+
     with open(parsed_obj_path, 'rb') as f:
         parsed_obj = pkl.load(f)
     node_tags = {}
 
     # write the multi node tag to json file
     path = get_up_layer_path(city_path)
-    output_tags = path + '/node_tags.json'
+    output_tags = path + '/node2tags.json'
     all_node = parsed_obj.nodeDic
     for key in all_node:
         node_tags[str(key)] = {}
@@ -34,6 +36,8 @@ def gen_node_tags_json(city_path, parsed_obj_path):
 
 
 def gen_node_way_json(city_path, parsed_obj_path):
+
+    print 'generate node2way json file for ', city_path
 
     with open(parsed_obj_path, 'rb') as f:
         parsed_obj = pkl.load(f)
@@ -85,7 +89,9 @@ def get_distance(lng1, lat1, lng2, lat2):
 def gen_city_coordinate_json(cities_path, parsed_obj_path):
 
     for city_path in cities_path:
-        print 'generate city coordinate json file: ' + city_path
+
+        print 'generate node2coords json file for ', city_path
+
         with open(parsed_obj_path, 'rb') as f:
             parsed_obj = pkl.load(f)
         ct = get_parent_dir(city_path)
@@ -97,7 +103,7 @@ def gen_city_coordinate_json(cities_path, parsed_obj_path):
             node2coords[str(osm_id)] = parsed_obj.nodeDic[osm_id][1]
         for osm_id in parsed_obj.coordDic:
             node2coords[str(osm_id)] = parsed_obj.coordDic[osm_id]
-        coordinate_file = path + '/node_coordinate.json'
+        coordinate_file = path + '/node2coords.json'
         with open(coordinate_file, 'w+') as f:
             f.write(json.dumps(node2coords))
 
@@ -109,15 +115,15 @@ def gen_city_coordinate_json(cities_path, parsed_obj_path):
                     if node in node_read:
                         continue
                     node_read.add(node)
-                    coordinate = node2coords[str(node)]
+                    coordinate = node2coords[node]
                     node_coordinate.append((node, coordinate))
 
-        with open(path + '/node_coordinate_lat.txt', 'w+') as lat_file:
+        with open(path + '/node_latitude.txt', 'w+') as lat_file:
             for node in node_coordinate:
                 (node_id, [node_lon, node_lat]) = node
                 lat_file.write(node_id + ' ' + str(node_lat) + '\n')
 
-        with open(path + '/node_coordinate_lon.txt', 'w+') as lon_file:
+        with open(path + '/node_longitude.txt', 'w+') as lon_file:
             for node in node_coordinate:
                 (node_id, [node_lon, node_lat]) = node
                 lon_file.write(node_id + ' ' + str(node_lon) + '\n')
@@ -351,7 +357,9 @@ def compute_overlap_crash_node(city_path, crash_file_path, highway=True, allNode
 
 
 # map crash node coordinate to a road segment
-def map_crash_coords_to_segment(city_path, crash_file_path, highway=True, allNodes=False):
+def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
+
+    print 'map crashes to segment for ', city_path
 
     crash_coordinates = []
     with open(crash_file_path) as f:
@@ -361,7 +369,7 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True, allNod
                 first_line = False
                 continue
             items = line.strip().split(',')
-            crashe_id = items[23]
+            crash_id = items[23]
             lon = items[5].strip()
             lat = items[4].strip()
             if lat == '' or lon == '':
@@ -369,23 +377,25 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True, allNod
             else:
                 lon = float(lon)
                 lat = float(lat)
-            crash_coordinates.append((lon, lat))
+            crash_coordinates.append((crash_id, (lon, lat)))
 
     ct = get_parent_dir(city_path)
     network_file_path = ct + '/network/' + ct
     if not highway:
         network_file_path = network_file_path + '_allWays'
-    if allNodes:
-        network_file_path = network_file_path + '_allNodes.network'
-    else:
-        network_file_path = network_file_path + '.network'
+    network_file_path = network_file_path + '.network'
     path = get_up_layer_path(city_path)
-    coordinate_file = path + '/node_coordinate.json'
+    coordinate_file = path + '/node2coords.json'
 
-    node_tags_in_network = {}
+    print '11111111111'
 
     with open(coordinate_file, 'r') as f:
         node2coords = json.loads(f.readline())
+
+    node2way_file = path + '/node2way.json'
+
+    with open(node2way_file, 'r') as f:
+        node2way = json.loads(f.readline())
 
     node_coordinate = []
     node_read = set()
@@ -404,10 +414,12 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True, allNod
     node_coordinate_lat = copy.copy(node_coordinate)
     node_coordinate_lat.sort(key=lambda ele: ele[1][1])
 
+    print '22222222222222'
+    crash2way = {}
     available = 0
     for _coords in crash_coordinates:
         have_availables = False
-        (_lon, _lat) = _coords
+        (crash_id, (_lon, _lat)) = _coords
         _nodes = get_nodes_from_list(node_coordinate_lat, _lat)
         min_distance = float('inf')
         min_node = None
@@ -421,12 +433,15 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True, allNod
                 continue
             else:
                 have_availables = True
+                min_way = node2way[min_node]
+                crash2way[crash_id] = min_way
 
         if have_availables:
             available += 1
 
+    with open(city_path + '/crash2way.json', 'w+') as crash_file:
+        crash_file.write(json.dumps(crash2way))
     print "availables: ", available
-    return node_tags_in_network
 
 
 if __name__ == '__main__':
@@ -455,7 +470,7 @@ if __name__ == '__main__':
 
     # compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
 
-    map_crash_coords_to_segment(cities_path[4], 'newyork/dataset/Motor_Vehicle_Collisions_Crashes2018.csv', highway=False, allNodes=True)
+    map_crash_coords_to_segment(cities_path[4], 'newyork/dataset/Motor_Vehicle_Collisions_Crashes2018.csv', highway=True)
 
     # gen_increament_tag_file(cities_path[0], supplemeted_node2tags)
 

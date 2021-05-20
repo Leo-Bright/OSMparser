@@ -1,5 +1,5 @@
 from imposm.parser import OSMParser
-import pickle as pkl
+import json
 
 
 # simple class that handles the parsed OSM data.
@@ -41,7 +41,24 @@ class OSMCounter(object):
 counter = OSMCounter()
 p = OSMParser(concurrency=4, ways_callback=counter.ways, nodes_callback=counter.nodes,
               coords_callback=counter.coords, relations_callback=counter.relations)
-p.parse('sanfrancisco/dataset/SanFrancisco.osm.pbf')
 
-with open('sanfrancisco/dataset/sanfrancisco_parsed_obj.pkl', 'wb') as f:
-    pkl.dump(counter, f)
+city_name = 'newyork'
+p.parse(city_name + '/dataset/newyork.osm.pbf')
+
+with open(city_name + '/dataset/' + city_name + '_ways.json', 'w+') as f:
+    f.write(json.dumps(counter.wayDic))
+
+with open(city_name + '/dataset/' + city_name + '_relations.json', 'w+') as f:
+    f.write(json.dumps(counter.relationDic))
+
+with open(city_name + '/dataset/' + city_name + '_coords.json', 'w+') as f:
+    f.write(json.dumps(counter.coordDic))
+
+with open(city_name + '/dataset/' + city_name + '_nodes.json', 'w+') as f:
+    f.write(json.dumps(counter.nodeDic))
+
+with open(city_name + '/dataset/' + city_name + '_highways.json', 'w+') as f:
+    f.write(json.dumps(counter.highwayDic))
+
+with open(city_name + '/dataset/' + city_name + '_crossing_nodes.json', 'w+') as f:
+    f.write(json.dumps(counter.crossing_nodes))

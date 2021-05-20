@@ -88,7 +88,6 @@ f_nodes_intersection_json.write(json.dumps(intersection_nodes))
 f_nodes_intersection_json.close()
 
 
-
 # write the crossing nodes result to file
 f_nodes_crossing_json = open(r'sanfrancisco/dataset/nodes_crossing.json', 'w+')
 f_nodes_crossing_data = open(r'sanfrancisco/dataset/nodes_crossing.data', 'w+')
