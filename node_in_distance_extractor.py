@@ -368,7 +368,7 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
                 first_line = False
                 continue
             items = line.strip().split(',')
-            crash_id = items[23]
+            crash_id = items[24]
             lon = items[5].strip()
             lat = items[4].strip()
             if lat == '' or lon == '':
@@ -413,15 +413,19 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
     node_coordinate_lat.sort(key=lambda ele: ele[1][1])
 
     crash2way = {}
-    available = 0
-    count = 0
+    success_count = 0
+    fail_count = 0
+    fail_crash = []
     print 'How many crash node should be process: ', len(crash_coordinates)
     for _coords in crash_coordinates:
 
         have_availables = False
         (crash_id, (_lon, _lat)) = _coords
 
-        print 'Start process No' + count + ' crash, id: ', crash_id
+        if success_count > 1000:
+            break
+
+        print 'Start process No ' + str(success_count) + ' crash, id: ', crash_id
 
         _nodes = get_nodes_from_list(node_coordinate_lat, _lat)
         min_distance = float('inf')
@@ -432,19 +436,28 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
             if dis <= min_distance:
                 min_distance = dis
                 min_node = _node[0]
-            if min_distance > 50:
-                continue
-            else:
-                have_availables = True
-                min_way = node2way[min_node]
-                crash2way[crash_id] = min_way
+        if min_distance > 50:
+            fail_count += 1
+            fail_crash.append(crash_id)
+            continue
+        else:
+            success_count += 1
+            min_way = node2way[min_node]
+            crash2way[crash_id] = min_way
 
-        if have_availables:
-            available += 1
+    with open(path + '/crash2way.json', 'w+') as crash_json:
+        crash_json.write(json.dumps(crash2way))
+    with open(path + '/crash2way.csv', 'w+') as crash_csv:
+        crash_csv.write("COLLISION_ID, OSM_ID_WAY\n")
+        for key in crash2way:
+            crash_csv.write(key + ', ' + str(crash2way[key]) + '\n')
 
-    with open(city_path + '/crash2way.json', 'w+') as crash_file:
-        crash_file.write(json.dumps(crash2way))
-    print "availables: ", available
+    with open(path + '/failedcrash.txt', 'w+') as file:
+        for ele in fail_crash:
+            file.write(str(ele) + '\n')
+
+    print 'succes: ', success_count
+    print 'failed: ', fail_count
 
 
 if __name__ == '__main__':
