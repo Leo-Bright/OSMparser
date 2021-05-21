@@ -445,6 +445,8 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
             min_way = node2way[min_node]
             crash2way[crash_id] = min_way
 
+    append_way_id_to_csv(crash2way, crash_file_path)
+
     with open(path + '/crash2way.json', 'w+') as crash_json:
         crash_json.write(json.dumps(crash2way))
     with open(path + '/crash2way.csv', 'w+') as crash_csv:
@@ -458,6 +460,31 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
 
     print 'succes: ', success_count
     print 'failed: ', fail_count
+
+
+def append_way_id_to_csv(crash2way, collision_file, crash_way_json='newyork/dataset/crash2way.json'):
+
+    if crash2way is None:
+        with open(crash_way_json, 'r') as f:
+            crash2way = json.loads(f.readline())
+
+    path, extension = collision_file.rsplit('.', 1)
+    output = path + '_have_wayID.' + extension
+
+    with open(output, 'w+') as output:
+        with open(collision_file) as collision_file:
+            first_line = True
+            for line in collision_file:
+                if first_line:
+                    first_line = False
+                    output.write(line.strip() + ',OSM_WAY_ID\n')
+                    continue
+                crash_id = line.strip().split(',')[24]
+                if crash_id not in crash2way:
+                    result = 'None'
+                else:
+                    result = str(crash2way[crash_id])
+                output.write(line.strip() + ',' + result + '\n')
 
 
 if __name__ == '__main__':
@@ -474,6 +501,8 @@ if __name__ == '__main__':
                    'newyork/dataset/newyork.osm.pbf'
                    ]
 
+    collision_file = 'newyork/dataset/Motor_Vehicle_Collisions_Crashes2018.csv'
+
     # node2tags = gen_node_tags_json(cities_path[4], parsed_obj_pkl)
 
     # node2ways = gen_node_way_json(cities_path[4], parsed_obj_pkl)
@@ -484,7 +513,9 @@ if __name__ == '__main__':
 
     # compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
 
-    map_crash_coords_to_segment(cities_path[4], 'newyork/dataset/Motor_Vehicle_Collisions_Crashes2018.csv', highway=True)
+    # map_crash_coords_to_segment(cities_path[4], collision_file, highway=True)
+
+    append_way_id_to_csv(None, collision_file, crash_way_json='newyork/dataset/crash2way.json')
 
     # gen_increament_tag_file(cities_path[0], supplemeted_node2tags)
 
