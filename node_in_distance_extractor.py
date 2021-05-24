@@ -443,7 +443,7 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
             min_way = node2way[min_node]
             crash2way[crash_id] = min_way
 
-    append_way_id_to_csv(crash2way, crash_file_path)
+    append_ext_info_to_csv(crash2way, crash_file_path)
 
     with open(path + '/crash2way.json', 'w+') as crash_json:
         crash_json.write(json.dumps(crash2way))
@@ -460,7 +460,7 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
     print 'failed: ', fail_count
 
 
-def append_way_id_to_csv(crash2way, collision_file, crash_way_json='newyork/dataset/crash2way.json'):
+def append_ext_info_to_csv(crash2way, collision_file, crash_way_json='newyork/dataset/crash2way.json'):
 
     if crash2way is None:
         with open(crash_way_json, 'r') as f:
@@ -469,20 +469,25 @@ def append_way_id_to_csv(crash2way, collision_file, crash_way_json='newyork/data
     path, extension = collision_file.rsplit('.', 1)
     output = path + '_have_wayID.' + extension
 
-    with open(output, 'w+') as output:
-        with open(collision_file) as collision_file:
-            first_line = True
-            for line in collision_file:
-                if first_line:
-                    first_line = False
-                    output.write(line.strip() + ',OSM_WAY_ID\n')
-                    continue
-                crash_id = line.strip().split(',')[24]
+    extended_crash = []
+    with open(output, 'w+') as output_file:
+        output_csv = csv.writer(output_file)
+        with open(collision_file) as crash_file:
+            crash_csv = csv.reader(crash_file)
+            headers = next(crash_csv)
+            headers.append('OSM_WAY_ID')
+            headers.append('WEEK_DAY')
+            extended_crash.append(headers)
+            for row in crash_csv:
+                crash_id = row[23]
                 if crash_id not in crash2way:
                     result = 'None'
                 else:
                     result = str(crash2way[crash_id])
-                output.write(line.strip() + ',' + result + '\n')
+                row.append(result)
+                row.append("1")
+                extended_crash.append(row)
+        output_csv.writerows(extended_crash)
 
 
 if __name__ == '__main__':
@@ -511,9 +516,9 @@ if __name__ == '__main__':
 
     # compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
 
-    map_crash_coords_to_segment(cities_path[4], collision_file, highway=True)
+    # map_crash_coords_to_segment(cities_path[4], collision_file, highway=True)
 
-    # append_way_id_to_csv(None, collision_file, crash_way_json='newyork/dataset/crash2way.json')
+    append_ext_info_to_csv(None, collision_file, crash_way_json='newyork/dataset/crash2way.json')
 
     # gen_increament_tag_file(cities_path[0], supplemeted_node2tags)
 

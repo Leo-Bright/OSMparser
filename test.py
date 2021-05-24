@@ -2,6 +2,7 @@ import os
 import shutil
 import json
 import re
+import csv
 
 
 # get names of files in the directory
@@ -76,7 +77,14 @@ def delete_zero_of_walks(input, output):
 
 def reg_number():
 
-    print str.isdigit("40")
+    collision_file = 'newyork/dataset/Motor_Vehicle_Collisions_Crashes2015.csv'
+
+    with open(collision_file) as crash_file:
+        crash_csv = csv.reader(crash_file)
+        for line in crash_file:
+            row = next(crash_csv)
+            print 'LINE: ', line
+            print 'ROW: ', row
 
     strings_to_test = ['01234567', '00000000', 'special-word 01234567'
                                                'special-word01234567', 'special-word01234567-']
