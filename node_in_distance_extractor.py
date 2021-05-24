@@ -1,5 +1,6 @@
 from math import radians, cos, sin, asin, sqrt
 import json, copy, pickle as pkl
+import csv
 
 
 def get_parent_dir(path):
@@ -362,16 +363,13 @@ def map_crash_coords_to_segment(city_path, crash_file_path, highway=True):
 
     crash_coordinates = []
     with open(crash_file_path) as f:
-        first_line = True
-        for line in f:
-            if first_line:
-                first_line = False
-                continue
-            items = line.strip().split(',')
-            crash_id = items[24]
-            lon = items[5].strip()
-            lat = items[4].strip()
-            if lat == '' or lon == '':
+        crash_csv = csv.reader(f)
+        crash_headers = next(crash_csv)
+        for row in crash_csv:
+            crash_id = row[23]
+            lat = row[4]
+            lon = row[5]
+            if not crash_id.isdigit() or lat == '' or lon == '':
                 continue
             else:
                 lon = float(lon)
@@ -501,7 +499,7 @@ if __name__ == '__main__':
                    'newyork/dataset/newyork.osm.pbf'
                    ]
 
-    collision_file = 'newyork/dataset/Motor_Vehicle_Collisions_Crashes2018.csv'
+    collision_file = 'newyork/dataset/Motor_Vehicle_Collisions_Crashes2015.csv'
 
     # node2tags = gen_node_tags_json(cities_path[4], parsed_obj_pkl)
 
@@ -513,9 +511,9 @@ if __name__ == '__main__':
 
     # compute_overlap_crash_node(cities_path[3], 'philadelphia/dataset/CRASH_2016_Philadelphia.csv', highway=False, allNodes=True)
 
-    # map_crash_coords_to_segment(cities_path[4], collision_file, highway=True)
+    map_crash_coords_to_segment(cities_path[4], collision_file, highway=True)
 
-    append_way_id_to_csv(None, collision_file, crash_way_json='newyork/dataset/crash2way.json')
+    # append_way_id_to_csv(None, collision_file, crash_way_json='newyork/dataset/crash2way.json')
 
     # gen_increament_tag_file(cities_path[0], supplemeted_node2tags)
 

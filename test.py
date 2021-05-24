@@ -1,6 +1,7 @@
 import os
 import shutil
 import json
+import re
 
 
 # get names of files in the directory
@@ -73,6 +74,18 @@ def delete_zero_of_walks(input, output):
             f.write(' '.join(walk) + '\n')
 
 
+def reg_number():
+
+    print str.isdigit("40")
+
+    strings_to_test = ['01234567', '00000000', 'special-word 01234567'
+                                               'special-word01234567', 'special-word01234567-']
+    digits_present = [re.search("(\S*) *([0-9]{8}) *(\S*)", i)
+                      for i in strings_to_test]
+    for match in digits_present:
+        print "{0:s} = {1:s} : {2:s} : {3:s}".format(match.group(0),
+                                                     match.group(1), match.group(2), match.group(3))
+
 if __name__ == '__main__':
 
     # stations = search_sf_station('sanfrancisco/dataset/TMAS2012.sta')
@@ -80,5 +93,7 @@ if __name__ == '__main__':
     #     print(item)
     # print(len(stations))
 
-    delete_zero_of_walks('sanfrancisco/network/sanfrancisco_shortest.walks',
-                         'sanfrancisco/network/sanfrancisco_shortest_nozero.walks')
+    # delete_zero_of_walks('sanfrancisco/network/sanfrancisco_shortest.walks',
+    #                      'sanfrancisco/network/sanfrancisco_shortest_nozero.walks')
+
+    reg_number()
