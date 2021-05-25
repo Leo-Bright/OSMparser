@@ -61,7 +61,7 @@ def get_index_from_list(array, start, end, lat):
     if start <= end:
         if array[mid_index][1][1] < lat:
             return get_index_from_list(array, mid_index+1, end, lat)
-        elif array[mid_index] > lat:
+        elif array[mid_index][1][1] > lat:
             return get_index_from_list(array, start, mid_index-1, lat)
         else:
             return mid_index
