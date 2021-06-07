@@ -57,4 +57,4 @@ with open(city_name + '/dataset/newyork_parsed_obj.pkl', 'rb') as f:
 
 # highways road network with all nodes
 highway_network_path = city_name + '/network/' + city_name + '.network'
-print_osm_network(parsed_obj, highway_network_path, highway=True, allNodes=True, onlyNode=False, forLINE=False)
+print_osm_network(parsed_obj, highway_network_path, highway=True, allNodes=True, onlyNode=True, forLINE=False)
